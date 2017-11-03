@@ -28,7 +28,7 @@ const Counter = createStateFulComponent(() => ({
                 return state;
         }
     },
-    render: ({ state, props, reduce }) => (
+    render: ({ state, reduce }) => (
         <div>
             <button onClick={() => reduce(add())}>+</button>
             <span>{state.counter}</span>

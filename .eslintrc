@@ -1,0 +1,30 @@
+{
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:flowtype/recommended",
+        "prettier",
+        "prettier/flowtype",
+        "prettier/react"
+    ],
+    "plugins": [
+        "react",
+        "flowtype"
+    ],
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+    },
+    "rules": {
+        "react/prop-types": [0],
+        "react/display-name": [0]
+    }
+}
