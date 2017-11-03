@@ -1,0 +1,31 @@
+{
+    "name": "react-stateful-component",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "flow check",
+        "storybook": "start-storybook -p 6006",
+        "build-storybook": "build-storybook",
+        "precommit": "lint-staged"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@storybook/addon-actions": "^3.2.14",
+        "@storybook/addon-links": "^3.2.14",
+        "@storybook/react": "^3.2.14",
+        "flow-bin": "^0.58.0",
+        "husky": "^0.14.3",
+        "lint-staged": "^4.3.0",
+        "prettier": "^1.7.4",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0"
+    },
+    "peerDependencies": {
+        "react": "^15.0.0-0 || ^16.0.0-0"
+    },
+    "lint-staged": {
+        "**/*.js": ["prettier --write", "git add"]
+    }
+}
