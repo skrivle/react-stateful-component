@@ -4,13 +4,9 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import createStateFulComponent from '../src/';
 
-const add = () => ({
-    type: 'ADD'
-});
+const add = () => ({ type: 'ADD' });
 
-const subtract = () => ({
-    type: 'SUBTRACT'
-});
+const subtract = () => ({ type: 'SUBTRACT' });
 
 const Counter = createStateFulComponent(() => ({
     initialState: () => ({

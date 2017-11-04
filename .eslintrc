@@ -16,12 +16,14 @@
     ],
     "plugins": [
         "react",
-        "flowtype"
+        "flowtype",
+        "jest"
     ],
     "env": {
         "browser": true,
         "node": true,
-        "es6": true
+        "es6": true,
+        "jest/globals": true
     },
     "rules": {
         "react/prop-types": [0],

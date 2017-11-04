@@ -1,6 +1,6 @@
 # React Stateful Component
 
-this is work in progress ...
+This is work in progress ...
 
 Create stateful React components in a more functional way. Heavily inspired by ReasonReact's api
 https://reasonml.github.io/reason-react/
