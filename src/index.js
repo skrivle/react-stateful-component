@@ -10,19 +10,19 @@ type Reduce<A> = (action: A) => void;
 
 type Render<P, S, A> = (args: { state: S, props: P, reduce: Reduce<A> }) => Node;
 
-export type StateFulComponent<P: {}, S: {}, A: Action> = {|
+export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
     initialState: (props: P) => S,
     reducer: Reducer<S, A>,
     render: Render<P, S, A>
 |};
 
-export type Make<P, S, A> = () => StateFulComponent<P, S, A>;
+export type Make<P, S, A> = () => StatefulComponentDef<P, S, A>;
 
-export default function createStateFulComponent<P: {}, S: {}, A: Action>(
+export default function createStatefulComponent<P: {}, S: {}, A: Action>(
     make: Make<P, S, A>
 ): ComponentType<P> {
     return class extends Component<P, S> {
-        instance: StateFulComponent<P, S, A>;
+        instance: StatefulComponentDef<P, S, A>;
 
         reduce: Reduce<A>;
 
@@ -36,9 +36,7 @@ export default function createStateFulComponent<P: {}, S: {}, A: Action>(
             };
 
             this.reduce = action => {
-                this.setState(prevState => {
-                    return this.instance.reducer(prevState, action);
-                });
+                this.setState(prevState => this.instance.reducer(prevState, action));
             };
         }
         render() {

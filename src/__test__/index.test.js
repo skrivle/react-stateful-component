@@ -4,13 +4,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import createStateFulComponent from '../index';
+import createStatefulComponent from '../index';
 
 configure({ adapter: new Adapter() });
 
-describe('createStateFulComponent', () => {
+describe('createStatefulComponent', () => {
     it('it should create a stateful component without errors', () => {
-        const MyStateFulComponent = createStateFulComponent(() => ({
+        const MyStateFulComponent = createStatefulComponent(() => ({
             initialState: () => ({}),
             reducer: state => state,
             render: () => <div />
@@ -23,7 +23,7 @@ describe('createStateFulComponent', () => {
 
     describe('initialState', () => {
         it('it should set the initialState', () => {
-            const MyStateFulComponent = createStateFulComponent(() => ({
+            const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 10 }),
                 reducer: state => state,
                 render: ({ state }) => <div>{state.counter}</div>
@@ -35,7 +35,7 @@ describe('createStateFulComponent', () => {
         });
 
         it('it should take props into account', () => {
-            const MyStateFulComponent = createStateFulComponent(() => ({
+            const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: props => ({ counter: props.counter }),
                 reducer: state => state,
                 render: ({ state }) => <div>{state.counter}</div>
@@ -49,7 +49,7 @@ describe('createStateFulComponent', () => {
 
     describe('render', () => {
         it('should take props into account', () => {
-            const MyStateFulComponent = createStateFulComponent(() => ({
+            const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 0 }),
                 reducer: state => state,
                 render: ({ props }) => <div>{props.message}</div>
@@ -63,7 +63,7 @@ describe('createStateFulComponent', () => {
 
     describe('reducer', () => {
         it('should update the state', () => {
-            const MyStateFulComponent = createStateFulComponent(() => ({
+            const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 0 }),
                 reducer: (state, action) => {
                     const { counter } = state;
@@ -76,7 +76,7 @@ describe('createStateFulComponent', () => {
                             return state;
                     }
                 },
-                render: ({ state, reduce }) => (
+                render: ({ state: { counter }, reduce }) => (
                     <div>
                         <button className="add" onClick={() => reduce({ type: 'ADD' })}>
                             add
@@ -84,7 +84,7 @@ describe('createStateFulComponent', () => {
                         <button className="subtract" onClick={() => reduce({ type: 'SUBTRACT' })}>
                             subtract
                         </button>
-                        <div className="counter">{state.counter}</div>
+                        <div className="counter">{counter}</div>
                     </div>
                 )
             }));

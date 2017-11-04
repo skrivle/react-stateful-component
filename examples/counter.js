@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStateFulComponent from '../src/';
+import createStatefulComponent from '../src/';
 
 const add = () => ({ type: 'ADD' });
 
 const subtract = () => ({ type: 'SUBTRACT' });
 
-const Counter = createStateFulComponent(() => ({
+const Counter = createStatefulComponent(() => ({
     initialState: () => ({
         counter: 0
     }),

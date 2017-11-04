@@ -1,7 +1,7 @@
 {
     "name": "react-stateful-component",
-    "version": "1.0.0",
-    "description": "",
+    "version": "0.0.1",
+    "description": "Create stateful React components in a functional way.",
     "main": "lib/index.js",
     "files": ["lib"],
     "scripts": {
@@ -16,8 +16,12 @@
         "build:babel": "babel src -d lib",
         "build": "npm run build:flow && npm run build:babel"
     },
-    "author": "",
-    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vejersele/react-stateful-component.git"
+    },
+    "author": "Jelle Versele",
+    "license": "MIT",
     "devDependencies": {
         "@storybook/addon-actions": "^3.2.14",
         "@storybook/addon-links": "^3.2.14",
