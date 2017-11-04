@@ -3,7 +3,9 @@
     "version": "0.0.1",
     "description": "Create stateful React components in a functional way.",
     "main": "lib/index.js",
-    "files": ["lib"],
+    "files": [
+        "lib"
+    ],
     "scripts": {
         "lint": "eslint .",
         "flow": "flow check",
@@ -43,6 +45,7 @@
         "flow-copy-source": "^1.2.1",
         "husky": "^0.14.3",
         "jest": "^21.2.1",
+        "jest-enzyme": "^4.0.1",
         "lint-staged": "^4.3.0",
         "prettier": "^1.7.4",
         "react": "^16.0.0",
@@ -53,6 +56,12 @@
         "react": "^15.0.0-0 || ^16.0.0-0"
     },
     "lint-staged": {
-        "**/*.js": ["prettier --write", "git add"]
+        "**/*.js": [
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "jest": {
+        "setupTestFrameworkScriptFile": "./setup-tests.js"
     }
 }

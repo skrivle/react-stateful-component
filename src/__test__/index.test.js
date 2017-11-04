@@ -2,11 +2,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { configure, shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { shallow } from 'enzyme';
 import createStatefulComponent from '../index';
-
-configure({ adapter: new Adapter() });
 
 describe('createStatefulComponent', () => {
     it('it should create a stateful component without errors', () => {
@@ -31,7 +28,7 @@ describe('createStatefulComponent', () => {
 
             const wrapper = shallow(<MyStateFulComponent />);
 
-            expect(wrapper.find('div').text()).toBe('10');
+            expect(wrapper.find('div')).toHaveText('10');
         });
 
         it('it should take props into account', () => {
@@ -43,7 +40,7 @@ describe('createStatefulComponent', () => {
 
             const wrapper = shallow(<MyStateFulComponent counter={20} />);
 
-            expect(wrapper.find('div').text()).toBe('20');
+            expect(wrapper.find('div')).toHaveText('20');
         });
     });
 
@@ -57,7 +54,7 @@ describe('createStatefulComponent', () => {
 
             const wrapper = shallow(<MyStateFulComponent message={'Hello World'} />);
 
-            expect(wrapper.find('div').text()).toBe('Hello World');
+            expect(wrapper.find('div')).toHaveText('Hello World');
         });
     });
 
@@ -91,15 +88,65 @@ describe('createStatefulComponent', () => {
 
             const wrapper = shallow(<MyStateFulComponent />);
 
-            expect(wrapper.find('.counter').text()).toBe('0');
+            expect(wrapper.find('.counter')).toHaveText('0');
 
             wrapper.find('.add').simulate('click');
 
-            expect(wrapper.find('.counter').text()).toBe('1');
+            expect(wrapper.find('.counter')).toHaveText('1');
 
             wrapper.find('.subtract').simulate('click');
 
-            expect(wrapper.find('.counter').text()).toBe('0');
+            expect(wrapper.find('.counter')).toHaveText('0');
+        });
+    });
+
+    describe('didMount', () => {
+        it('should be called on mount', () => {
+            const didMount = jest.fn();
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({}),
+                reducer: state => state,
+                render: () => <div />,
+                didMount
+            }));
+
+            shallow(<MyStateFulComponent />);
+
+            expect(didMount).toHaveBeenCalledTimes(1);
+        });
+
+        it('should have access to reduce', done => {
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({ counter: 0 }),
+                reducer: state => state,
+                render: () => <div />,
+                didMount: ({ reduce }) => {
+                    expect(reduce).toBeDefined();
+                    done();
+                }
+            }));
+
+            shallow(<MyStateFulComponent />);
+        });
+    });
+
+    describe('unMount', () => {
+        it('should be called on unmount', () => {
+            const willUnmount = jest.fn();
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({}),
+                reducer: state => state,
+                render: () => <div />,
+                willUnmount
+            }));
+
+            const wrapper = shallow(<MyStateFulComponent />);
+
+            wrapper.unmount();
+
+            expect(willUnmount).toHaveBeenCalledTimes(1);
         });
     });
 });

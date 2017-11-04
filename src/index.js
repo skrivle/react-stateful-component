@@ -4,46 +4,70 @@ import { Component, type Node, type ComponentType } from 'react';
 
 type Action = { type: string };
 
-type Reducer<S, A> = (state: S, action: A) => S;
-
 type Reduce<A> = (action: A) => void;
-
-type Render<P, S, A> = (args: { state: S, props: P, reduce: Reduce<A> }) => Node;
 
 export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
     initialState: (props: P) => S,
-    reducer: Reducer<S, A>,
-    render: Render<P, S, A>
+    reducer: (state: S, action: A) => S,
+    render: (args: { state: S, props: P, reduce: Reduce<A> }) => Node,
+    didMount?: (args: { reduce: Reduce<A> }) => void,
+    willUnmount?: () => void,
+    willReceiveProps?: (nextProps: P, { state: S, props: P, reduce: Reduce<A> }) => S
 |};
 
-export type Make<P, S, A> = () => StatefulComponentDef<P, S, A>;
+export type GetDefinition<P, S, A> = () => StatefulComponentDef<P, S, A>;
 
 export default function createStatefulComponent<P: {}, S: {}, A: Action>(
-    make: Make<P, S, A>
+    getDefinition: GetDefinition<P, S, A>
 ): ComponentType<P> {
     return class extends Component<P, S> {
-        instance: StatefulComponentDef<P, S, A>;
+        definition: StatefulComponentDef<P, S, A>;
 
         reduce: Reduce<A>;
 
         constructor(props: P) {
             super(props);
 
-            this.instance = make();
+            this.definition = getDefinition();
 
             this.state = {
-                ...this.instance.initialState(this.props)
+                ...this.definition.initialState(this.props)
             };
 
             this.reduce = action => {
-                this.setState(prevState => this.instance.reducer(prevState, action));
+                this.setState(prevState => this.definition.reducer(prevState, action));
             };
         }
+
+        componentDidMount() {
+            if (!this.definition.didMount) return;
+            this.definition.didMount({ reduce: this.reduce });
+        }
+
+        componentWillUnmount() {
+            if (!this.definition.willUnmount) return;
+            this.definition.willUnmount();
+        }
+
+        componentWillReceiveProps(nextProps: P) {
+            const { willReceiveProps } = this.definition;
+
+            if (!willReceiveProps) return;
+
+            this.setState(prevState =>
+                willReceiveProps(nextProps, {
+                    state: prevState,
+                    props: this.props,
+                    reduce: this.reduce
+                })
+            );
+        }
+
         render() {
-            return this.instance.render({
+            return this.definition.render({
                 state: this.state,
                 props: this.props,
-                reduce: action => this.reduce(action)
+                reduce: this.reduce
             });
         }
     };
