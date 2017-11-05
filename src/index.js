@@ -18,7 +18,8 @@ export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
     render: (self: Self<P, S, A>) => Node,
     didMount?: (self: Self<P, S, A>) => void,
     willUnmount?: (self: Self<P, S, A>) => void,
-    willReceiveProps?: (nextProps: P, self: Self<P, S, A>) => void
+    willReceiveProps?: (nextProps: P, self: Self<P, S, A>) => void,
+    didUpdate?: (oldSelf: {| state: S, props: P |}, self: Self<P, S, A>) => void
 |};
 
 export type GetDefinition<P, S, A> = () => StatefulComponentDef<P, S, A>;
@@ -68,6 +69,19 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
 
             if (!willReceiveProps) return;
             willReceiveProps(nextProps, this._getSelf());
+        }
+
+        componentDidUpdate(prevProps: P, prevState: S) {
+            const { didUpdate } = this.definition;
+
+            if (!didUpdate) return;
+
+            const oldSelf = {
+                state: prevState,
+                props: prevProps
+            };
+
+            didUpdate(oldSelf, this._getSelf());
         }
 
         render() {

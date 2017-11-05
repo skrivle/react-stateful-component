@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import createStatefulComponent from '../index';
 
 describe('createStatefulComponent', () => {
@@ -189,6 +189,44 @@ describe('createStatefulComponent', () => {
             const wrapper = shallow(<MyStateFulComponent value="initial" />);
 
             wrapper.setProps({ value: 'new value' });
+        });
+    });
+
+    describe('didUpdate', () => {
+        it('should be called when the component has been updated', done => {
+            const setValue = value => ({
+                type: 'SET_VALUE',
+                value
+            });
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({
+                    value: 'initial'
+                }),
+                reducer: (state, action) => ({ value: action.value }),
+                render: ({ state: { value }, reduce }) => (
+                    <div>
+                        <button className="update" onClick={() => reduce(setValue('new value'))} />
+                        <div className="value">{value}</div>
+                    </div>
+                ),
+                didUpdate: (oldSelf, { state, props, reduce }) => {
+                    expect(oldSelf.state).toEqual({ value: 'initial' });
+                    expect(oldSelf.props).toEqual({ myProp: 'test' });
+
+                    expect(state).toEqual({ value: 'new value' });
+                    expect(props).toEqual({ myProp: 'test' });
+                    expect(reduce).toBeDefined();
+
+                    done();
+                }
+            }));
+
+            const wrapper = mount(<MyStateFulComponent myProp="test" />);
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+
+            wrapper.find('.update').simulate('click');
         });
     });
 });
