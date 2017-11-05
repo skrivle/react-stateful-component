@@ -101,27 +101,14 @@ describe('createStatefulComponent', () => {
     });
 
     describe('didMount', () => {
-        it('should be called on mount', () => {
-            const didMount = jest.fn();
-
+        it('should have access to self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
                 reducer: state => state,
                 render: () => <div />,
-                didMount
-            }));
-
-            shallow(<MyStateFulComponent />);
-
-            expect(didMount).toHaveBeenCalledTimes(1);
-        });
-
-        it('should have access to reduce', done => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
-                initialState: () => ({ counter: 0 }),
-                reducer: state => state,
-                render: () => <div />,
-                didMount: ({ reduce }) => {
+                didMount: ({ state, props, reduce }) => {
+                    expect(state).toBeDefined();
+                    expect(props).toBeDefined();
                     expect(reduce).toBeDefined();
                     done();
                 }
@@ -132,42 +119,27 @@ describe('createStatefulComponent', () => {
     });
 
     describe('unMount', () => {
-        it('should be called on unmount', () => {
-            const willUnmount = jest.fn();
-
+        it('should have access to self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
                 reducer: state => state,
                 render: () => <div />,
-                willUnmount
+                willUnmount: ({ state, props, reduce }) => {
+                    expect(state).toBeDefined();
+                    expect(props).toBeDefined();
+                    expect(reduce).toBeDefined();
+
+                    done();
+                }
             }));
 
             const wrapper = shallow(<MyStateFulComponent />);
 
             wrapper.unmount();
-
-            expect(willUnmount).toHaveBeenCalledTimes(1);
         });
     });
 
     describe('willReceiveProps', () => {
-        it('should be called when the component receives new props', () => {
-            const willReceiveProps = jest.fn();
-
-            const MyStateFulComponent = createStatefulComponent(() => ({
-                initialState: () => ({}),
-                reducer: state => state,
-                render: () => <div />,
-                willReceiveProps
-            }));
-
-            const wrapper = shallow(<MyStateFulComponent />);
-
-            wrapper.setProps({ value: 'new value' });
-
-            expect(willReceiveProps).toHaveBeenCalledTimes(1);
-        });
-
         it('should have access to nextProps and self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: props => ({
