@@ -151,28 +151,44 @@ describe('createStatefulComponent', () => {
     });
 
     describe('willReceiveProps', () => {
-        it('should update the state', () => {
+        it('should be called when the component receives new props', () => {
+            const willReceiveProps = jest.fn();
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({}),
+                reducer: state => state,
+                render: () => <div />,
+                willReceiveProps
+            }));
+
+            const wrapper = shallow(<MyStateFulComponent />);
+
+            wrapper.setProps({ value: 'new value' });
+
+            expect(willReceiveProps).toHaveBeenCalledTimes(1);
+        });
+
+        it('should have access to nextProps and self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: props => ({
                     value: props.value
                 }),
                 reducer: state => state,
-                render: ({ state: { value } }) => <div>{value}</div>,
-                willReceiveProps: (nextProps, { state }) => {
-                    if (nextProps.value === state.value) return state;
-                    return {
-                        value: nextProps.value
-                    };
+                render: () => <div />,
+                willReceiveProps: (nextProps, { state, props, reduce }) => {
+                    expect(nextProps.value).toBe('new value');
+
+                    expect(state).toBeDefined();
+                    expect(props).toBeDefined();
+                    expect(reduce).toBeDefined();
+
+                    done();
                 }
             }));
 
             const wrapper = shallow(<MyStateFulComponent value="initial" />);
 
-            expect(wrapper.find('div')).toHaveText('initial');
-
             wrapper.setProps({ value: 'new value' });
-
-            expect(wrapper.find('div')).toHaveText('new value');
         });
     });
 });
