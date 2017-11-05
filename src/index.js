@@ -6,13 +6,19 @@ type Action = { type: string };
 
 type Reduce<A> = (action: A) => void;
 
+type Self<P, S, A> = {
+    state: S,
+    props: P,
+    reduce: Reduce<A>
+};
+
 export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
     initialState: (props: P) => S,
     reducer: (state: S, action: A) => S,
-    render: (args: { state: S, props: P, reduce: Reduce<A> }) => Node,
-    didMount?: (args: { reduce: Reduce<A> }) => void,
-    willUnmount?: () => void,
-    willReceiveProps?: (nextProps: P, { state: S, props: P, reduce: Reduce<A> }) => S
+    render: (self: Self<P, S, A>) => Node,
+    didMount?: (self: Self<P, S, A>) => void,
+    willUnmount?: (self: Self<P, S, A>) => void,
+    willReceiveProps?: (nextProps: P, self: {| state: S, props: P |}) => S
 |};
 
 export type GetDefinition<P, S, A> = () => StatefulComponentDef<P, S, A>;
@@ -30,23 +36,31 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
 
             this.definition = getDefinition();
 
-            this.state = {
-                ...this.definition.initialState(this.props)
-            };
+            this.state = this.definition.initialState(this.props);
 
             this.reduce = action => {
                 this.setState(prevState => this.definition.reducer(prevState, action));
             };
         }
 
+        _getSelf(state?: S) {
+            return {
+                state: state || this.state,
+                props: this.props,
+                reduce: this.reduce
+            };
+        }
+
         componentDidMount() {
-            if (!this.definition.didMount) return;
-            this.definition.didMount({ reduce: this.reduce });
+            const { didMount } = this.definition;
+            if (!didMount) return;
+            didMount(this._getSelf());
         }
 
         componentWillUnmount() {
-            if (!this.definition.willUnmount) return;
-            this.definition.willUnmount();
+            const { willUnmount } = this.definition;
+            if (!willUnmount) return;
+            willUnmount(this._getSelf());
         }
 
         componentWillReceiveProps(nextProps: P) {
@@ -54,11 +68,10 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
 
             if (!willReceiveProps) return;
 
-            this.setState(prevState =>
+            this.setState((prevState, props) =>
                 willReceiveProps(nextProps, {
                     state: prevState,
-                    props: this.props,
-                    reduce: this.reduce
+                    props
                 })
             );
         }
