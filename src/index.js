@@ -19,7 +19,9 @@ export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
     didMount?: (self: Self<P, S, A>) => void,
     willUnmount?: (self: Self<P, S, A>) => void,
     willReceiveProps?: (nextProps: P, self: Self<P, S, A>) => void,
-    didUpdate?: (oldSelf: {| state: S, props: P |}, self: Self<P, S, A>) => void
+    willUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A>) => void,
+    didUpdate?: (prevSelf: {| state: S, props: P |}, self: Self<P, S, A>) => void,
+    shouldUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A>) => boolean
 |};
 
 export type GetDefinition<P, S, A> = () => StatefulComponentDef<P, S, A>;
@@ -71,17 +73,42 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
             willReceiveProps(nextProps, this._getSelf());
         }
 
+        componentWillUpdate(nextProps: P, nextState: S) {
+            const { willUpdate } = this.definition;
+            if (!willUpdate) return;
+
+            const nextSelf = {
+                state: nextState,
+                props: nextProps
+            };
+
+            willUpdate(nextSelf, this._getSelf());
+        }
+
         componentDidUpdate(prevProps: P, prevState: S) {
             const { didUpdate } = this.definition;
 
             if (!didUpdate) return;
 
-            const oldSelf = {
+            const prevSelf = {
                 state: prevState,
                 props: prevProps
             };
 
-            didUpdate(oldSelf, this._getSelf());
+            didUpdate(prevSelf, this._getSelf());
+        }
+
+        shouldComponentUpdate(nextProps: P, nextState: S): boolean {
+            const { shouldUpdate } = this.definition;
+
+            if (!shouldUpdate) return true;
+
+            const nextSelf = {
+                state: nextState,
+                props: nextProps
+            };
+
+            return shouldUpdate(nextSelf, this._getSelf());
         }
 
         render() {

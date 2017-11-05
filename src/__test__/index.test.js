@@ -182,9 +182,9 @@ describe('createStatefulComponent', () => {
                         <div className="value">{value}</div>
                     </div>
                 ),
-                didUpdate: (oldSelf, { state, props, reduce }) => {
-                    expect(oldSelf.state).toEqual({ value: 'initial' });
-                    expect(oldSelf.props).toEqual({ myProp: 'test' });
+                didUpdate: (prevSelf, { state, props, reduce }) => {
+                    expect(prevSelf.state).toEqual({ value: 'initial' });
+                    expect(prevSelf.props).toEqual({ myProp: 'test' });
 
                     expect(state).toEqual({ value: 'new value' });
                     expect(props).toEqual({ myProp: 'test' });
@@ -195,6 +195,152 @@ describe('createStatefulComponent', () => {
             }));
 
             const wrapper = mount(<MyStateFulComponent myProp="test" />);
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+
+            wrapper.find('.update').simulate('click');
+        });
+    });
+
+    describe('willUpdate', () => {
+        it('should be called before the component has been updated', done => {
+            const setValue = value => ({
+                type: 'SET_VALUE',
+                value
+            });
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({
+                    value: 'initial'
+                }),
+                reducer: (state, action) => ({ value: action.value }),
+                render: ({ state: { value }, reduce }) => (
+                    <div>
+                        <button className="update" onClick={() => reduce(setValue('new value'))} />
+                        <div className="value">{value}</div>
+                    </div>
+                ),
+                willUpdate: (nextSelf, { state, props, reduce }) => {
+                    expect(nextSelf.state).toEqual({ value: 'new value' });
+                    expect(nextSelf.props).toEqual({ myProp: 'test' });
+
+                    expect(state).toEqual({ value: 'initial' });
+                    expect(props).toEqual({ myProp: 'test' });
+                    expect(reduce).toBeDefined();
+
+                    done();
+                }
+            }));
+
+            const wrapper = mount(<MyStateFulComponent myProp="test" />);
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+
+            wrapper.find('.update').simulate('click');
+        });
+    });
+
+    describe('shouldUpdate', () => {
+        it('should prevent the component from updating when new props are passed and shouldUpdate is returning false', () => {
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({}),
+                reducer: state => state,
+                render: ({ props: { value } }) => <div className="value">{value}</div>,
+                shouldUpdate: () => false
+            }));
+
+            const wrapper = mount(<MyStateFulComponent value="initial" />);
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+
+            wrapper.setProps({
+                value: 'new value'
+            });
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+        });
+
+        it('should prevent the component from updating when the state is updated and shouldUpdate is returning false', () => {
+            const setValue = value => ({
+                type: 'SET_VALUE',
+                value
+            });
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({ value: 'initial' }),
+                reducer: (state, action) => ({ value: action.value }),
+                render: ({ state: { value }, reduce }) => (
+                    <div>
+                        <button className="update" onClick={() => reduce(setValue('new value'))} />
+                        <div className="value">{value}</div>
+                    </div>
+                ),
+                shouldUpdate: () => false
+            }));
+
+            const wrapper = mount(<MyStateFulComponent />);
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+
+            wrapper.find('.update').simulate('click');
+
+            expect(wrapper.find('.value')).toHaveText('initial');
+        });
+
+        it('should have access to nextSelf and self when props are updated', done => {
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({}),
+                reducer: state => state,
+                render: ({ props: { value } }) => <div className="value">{value}</div>,
+                shouldUpdate: (nextSelf, { state, props, reduce }) => {
+                    expect(nextSelf.state).toBeDefined();
+                    expect(nextSelf.props).toEqual({ value: 'new value' });
+
+                    expect(state).toBeDefined();
+                    expect(props).toEqual({ value: 'initial' });
+                    expect(reduce).toBeDefined();
+
+                    done();
+                    return true;
+                }
+            }));
+
+            const wrapper = mount(<MyStateFulComponent value="initial" />);
+
+            wrapper.setProps({
+                value: 'new value'
+            });
+        });
+
+        it('should have access to nextSelf and self when the state is updated', done => {
+            const setValue = value => ({
+                type: 'SET_VALUE',
+                value
+            });
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({ value: 'initial' }),
+                reducer: (state, action) => ({ value: action.value }),
+                render: ({ state: { value }, reduce }) => (
+                    <div>
+                        <button className="update" onClick={() => reduce(setValue('new value'))} />
+                        <div className="value">{value}</div>
+                    </div>
+                ),
+                shouldUpdate: (nextSelf, { state, props, reduce }) => {
+                    expect(nextSelf.state).toEqual({ value: 'new value' });
+                    expect(nextSelf.props).toBeDefined();
+
+                    expect(state).toEqual({ value: 'initial' });
+                    expect(props).toBeDefined();
+                    expect(reduce).toBeDefined();
+
+                    done();
+                    return true;
+                }
+            }));
+
+            const wrapper = mount(<MyStateFulComponent />);
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
