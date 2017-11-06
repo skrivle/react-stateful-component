@@ -5,43 +5,16 @@ import { storiesOf } from '@storybook/react';
 import uuid from 'uuid/v1';
 import createStatefulComponent, { update } from '../src/';
 
-type Todo = {
-    id: string,
-    text: string
-};
-
-type State = {
-    items: Array<Todo>,
-    isPending: boolean,
-    value: string
-};
-
-type UpdateValue = {
-    type: 'UPDATE_VALUE',
-    text: string
-};
-
-type AddTodoRequested = {
-    type: 'ADD_TODO_REQUESTED'
-};
-
-type AddTodoReceived = {
-    type: 'ADD_TODO_RECEIVED',
-    todo: Todo
-};
-
-type Action = UpdateValue | AddTodoRequested | AddTodoReceived;
-
-const updateValue = (text: string): UpdateValue => ({
+const updateValue = (text: string) => ({
     type: 'UPDATE_VALUE',
     text
 });
 
-const addTodo = (): AddTodoRequested => ({
+const addTodo = () => ({
     type: 'ADD_TODO_REQUESTED'
 });
 
-const addTodoReceived = (todo: Todo): AddTodoReceived => ({
+const addTodoReceived = todo => ({
     type: 'ADD_TODO_RECEIVED',
     todo
 });
@@ -71,7 +44,7 @@ const Todos = createStatefulComponent(() => ({
         value: '',
         isPending: false
     }),
-    reducer: (state: State, action: Action) => {
+    reducer: (state, action) => {
         switch (action.type) {
             case 'UPDATE_VALUE':
                 return update({
@@ -103,6 +76,8 @@ const Todos = createStatefulComponent(() => ({
             reduce(addTodo());
         };
 
+        const handleInputChange = e => reduce(updateValue(e.target.value));
+
         return (
             <div>
                 <ul>{items.map(item => <li key={item.id}>{item.text}</li>)}</ul>
@@ -111,7 +86,7 @@ const Todos = createStatefulComponent(() => ({
                         type="text"
                         value={value}
                         disabled={isPending}
-                        onChange={e => reduce(updateValue(e.target.value))}
+                        onChange={handleInputChange}
                     />
                     <button disabled={isPending} type="submit">
                         add
