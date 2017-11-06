@@ -98,7 +98,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
             didUpdate(prevSelf, this._getSelf());
         }
 
-        shouldComponentUpdate(nextProps: P, nextState: S): boolean {
+        shouldComponentUpdate(nextProps: P, nextState: S) {
             const { shouldUpdate } = this.definition;
 
             if (!shouldUpdate) return true;
