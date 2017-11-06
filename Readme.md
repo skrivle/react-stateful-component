@@ -11,7 +11,3 @@ Goals:
 - flow types
 - SideEffect support
 - support for lifecycle hooks
-
-Todo:
-- SideEffect's
-- how to deal with binding unbinding event handlers and timeouts/intervals (no access to instance vars)
