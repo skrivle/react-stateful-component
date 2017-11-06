@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStatefulComponent from '../src/';
+import createStatefulComponent, { update } from '../src/';
 
 const add = () => ({ type: 'ADD' });
 
@@ -17,11 +17,11 @@ const Counter = createStatefulComponent(() => ({
 
         switch (action.type) {
             case 'ADD':
-                return { counter: counter + 1 };
+                return update({ counter: counter + 1 });
             case 'SUBTRACT':
-                return { counter: counter - 1 };
+                return update({ counter: counter - 1 });
             default:
-                return state;
+                return update(state);
         }
     },
     render: ({ state, reduce }) => (

@@ -2,9 +2,9 @@
 
 import { Component, type Node, type ComponentType } from 'react';
 
-type Action = { type: string };
+type Action = {};
 
-type Reduce<A> = (action: A) => void;
+export type Reduce<A> = (action: A) => void;
 
 type Self<P, S, A> = {
     state: S,
@@ -12,9 +12,16 @@ type Self<P, S, A> = {
     reduce: Reduce<A>
 };
 
+type SideEffect<A> = (reduce: Reduce<A>) => any;
+
+type Update<S, A> = {
+    state: S,
+    sideEffect: ?SideEffect<A>
+};
+
 export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
     initialState: (props: P) => S,
-    reducer: (state: S, action: A) => S,
+    reducer: (state: S, action: A) => Update<S, A>,
     render: (self: Self<P, S, A>) => Node,
     didMount?: (self: Self<P, S, A>) => void,
     willUnmount?: (self: Self<P, S, A>) => void,
@@ -25,6 +32,11 @@ export type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
 |};
 
 export type GetDefinition<P, S, A> = () => StatefulComponentDef<P, S, A>;
+
+export const update = <S, A>(state: S, sideEffect: ?SideEffect<A> = null): Update<S, A> => ({
+    state,
+    sideEffect
+});
 
 export default function createStatefulComponent<P: {}, S: {}, A: Action>(
     getDefinition: GetDefinition<P, S, A>
@@ -42,7 +54,22 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
             this.state = this.definition.initialState(this.props);
 
             this.reduce = action => {
-                this.setState(prevState => this.definition.reducer(prevState, action));
+                let sideEffect;
+
+                this.setState(
+                    prevState => {
+                        const update = this.definition.reducer(prevState, action);
+
+                        sideEffect = update.sideEffect;
+
+                        return update.state;
+                    },
+                    () => {
+                        if (typeof sideEffect === 'function') {
+                            sideEffect(this.reduce);
+                        }
+                    }
+                );
             };
         }
 

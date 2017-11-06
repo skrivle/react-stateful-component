@@ -3,13 +3,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow, mount } from 'enzyme';
-import createStatefulComponent from '../index';
+import createStatefulComponent, { update } from '../index';
 
 describe('createStatefulComponent', () => {
     it('it should create a stateful component without errors', () => {
         const MyStateFulComponent = createStatefulComponent(() => ({
             initialState: () => ({}),
-            reducer: state => state,
+            reducer: state => update(state),
             render: () => <div />
         }));
 
@@ -22,7 +22,7 @@ describe('createStatefulComponent', () => {
         it('it should set the initialState', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 10 }),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
@@ -34,7 +34,7 @@ describe('createStatefulComponent', () => {
         it('it should take props into account', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: props => ({ counter: props.counter }),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
@@ -48,7 +48,7 @@ describe('createStatefulComponent', () => {
         it('should take props into account', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 0 }),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: ({ props }) => <div>{props.message}</div>
             }));
 
@@ -66,11 +66,11 @@ describe('createStatefulComponent', () => {
                     const { counter } = state;
                     switch (action.type) {
                         case 'ADD':
-                            return { counter: counter + 1 };
+                            return update({ counter: counter + 1 });
                         case 'SUBTRACT':
-                            return { counter: counter - 1 };
+                            return update({ counter: counter - 1 });
                         default:
-                            return state;
+                            return update(state);
                     }
                 },
                 render: ({ state: { counter }, reduce }) => (
@@ -104,7 +104,7 @@ describe('createStatefulComponent', () => {
         it('should have access to self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: () => <div />,
                 didMount: ({ state, props, reduce }) => {
                     expect(state).toBeDefined();
@@ -122,7 +122,7 @@ describe('createStatefulComponent', () => {
         it('should have access to self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: () => <div />,
                 willUnmount: ({ state, props, reduce }) => {
                     expect(state).toBeDefined();
@@ -145,7 +145,7 @@ describe('createStatefulComponent', () => {
                 initialState: props => ({
                     value: props.value
                 }),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: () => <div />,
                 willReceiveProps: (nextProps, { state, props, reduce }) => {
                     expect(nextProps.value).toBe('new value');
@@ -175,7 +175,7 @@ describe('createStatefulComponent', () => {
                 initialState: () => ({
                     value: 'initial'
                 }),
-                reducer: (state, action) => ({ value: action.value }),
+                reducer: (state, action) => update({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -213,7 +213,7 @@ describe('createStatefulComponent', () => {
                 initialState: () => ({
                     value: 'initial'
                 }),
-                reducer: (state, action) => ({ value: action.value }),
+                reducer: (state, action) => update({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -244,7 +244,7 @@ describe('createStatefulComponent', () => {
         it('should prevent the component from updating when new props are passed and shouldUpdate is returning false', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
                 shouldUpdate: () => false
             }));
@@ -268,7 +268,7 @@ describe('createStatefulComponent', () => {
 
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
-                reducer: (state, action) => ({ value: action.value }),
+                reducer: (state, action) => update({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -290,7 +290,7 @@ describe('createStatefulComponent', () => {
         it('should have access to nextSelf and self when props are updated', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => state,
+                reducer: state => update(state),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
                 shouldUpdate: (nextSelf, { state, props, reduce }) => {
                     expect(nextSelf.state).toBeDefined();
@@ -320,7 +320,7 @@ describe('createStatefulComponent', () => {
 
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
-                reducer: (state, action) => ({ value: action.value }),
+                reducer: (state, action) => update({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
