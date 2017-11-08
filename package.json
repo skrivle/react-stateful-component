@@ -14,8 +14,8 @@
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook",
         "precommit": "lint-staged",
-        "build:flow": "flow-copy-source src lib",
-        "build:babel": "babel src -d lib",
+        "build:flow": "flow-copy-source src lib --ignore __test__/**/*",
+        "build:babel": "babel src --out-dir lib --ignore __test__/",
         "build": "npm run build:flow && npm run build:babel"
     },
     "repository": {
