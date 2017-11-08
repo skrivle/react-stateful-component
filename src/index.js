@@ -41,39 +41,36 @@ export const update = <S, A>(state: S, sideEffect: ?SideEffect<A> = null): Updat
 export default function createStatefulComponent<P: {}, S: {}, A: Action>(
     getDefinition: GetDefinition<P, S, A>
 ): ComponentType<P> {
+    const definition = getDefinition();
+
     return class extends Component<P, S> {
         definition: StatefulComponentDef<P, S, A>;
-
         reduce: Reduce<A>;
 
-        constructor(props: P) {
-            super(props);
+        definition = definition;
+        state = definition.initialState(this.props);
 
-            this.definition = getDefinition();
+        reduce = (action: A) => {
+            let sideEffect;
 
-            this.state = this.definition.initialState(this.props);
+            this.setState(
+                prevState => {
+                    const update = definition.reducer(prevState, action);
 
-            this.reduce = action => {
-                let sideEffect;
+                    sideEffect = update.sideEffect;
 
-                this.setState(
-                    prevState => {
-                        const update = this.definition.reducer(prevState, action);
+                    return update.state;
+                },
+                () => this.runSideEffect(sideEffect)
+            );
+        };
 
-                        sideEffect = update.sideEffect;
-
-                        return update.state;
-                    },
-                    () => {
-                        if (typeof sideEffect === 'function') {
-                            sideEffect(this.reduce);
-                        }
-                    }
-                );
-            };
+        runSideEffect(sideEffect: ?SideEffect<A>) {
+            if (!sideEffect) return;
+            sideEffect(this.reduce);
         }
 
-        _getSelf() {
+        getSelf() {
             return {
                 state: this.state,
                 props: this.props,
@@ -82,26 +79,26 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
         }
 
         componentDidMount() {
-            const { didMount } = this.definition;
+            const { didMount } = definition;
             if (!didMount) return;
-            didMount(this._getSelf());
+            didMount(this.getSelf());
         }
 
         componentWillUnmount() {
-            const { willUnmount } = this.definition;
+            const { willUnmount } = definition;
             if (!willUnmount) return;
-            willUnmount(this._getSelf());
+            willUnmount(this.getSelf());
         }
 
         componentWillReceiveProps(nextProps: P) {
-            const { willReceiveProps } = this.definition;
+            const { willReceiveProps } = definition;
 
             if (!willReceiveProps) return;
-            willReceiveProps(nextProps, this._getSelf());
+            willReceiveProps(nextProps, this.getSelf());
         }
 
         componentWillUpdate(nextProps: P, nextState: S) {
-            const { willUpdate } = this.definition;
+            const { willUpdate } = definition;
             if (!willUpdate) return;
 
             const nextSelf = {
@@ -109,11 +106,11 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
                 props: nextProps
             };
 
-            willUpdate(nextSelf, this._getSelf());
+            willUpdate(nextSelf, this.getSelf());
         }
 
         componentDidUpdate(prevProps: P, prevState: S) {
-            const { didUpdate } = this.definition;
+            const { didUpdate } = definition;
 
             if (!didUpdate) return;
 
@@ -122,11 +119,11 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
                 props: prevProps
             };
 
-            didUpdate(prevSelf, this._getSelf());
+            didUpdate(prevSelf, this.getSelf());
         }
 
         shouldComponentUpdate(nextProps: P, nextState: S) {
-            const { shouldUpdate } = this.definition;
+            const { shouldUpdate } = definition;
 
             if (!shouldUpdate) return true;
 
@@ -135,11 +132,11 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
                 props: nextProps
             };
 
-            return shouldUpdate(nextSelf, this._getSelf());
+            return shouldUpdate(nextSelf, this.getSelf());
         }
 
         render() {
-            return this.definition.render({
+            return definition.render({
                 state: this.state,
                 props: this.props,
                 reduce: this.reduce
