@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStatefulComponent, { update } from '../src/';
+import createStatefulComponent, { update, SideEffectProvider } from '../src/';
 
 const add = () => ({ type: 'ADD' });
 
@@ -35,6 +35,8 @@ const Counter = createStatefulComponent(() => ({
 
 storiesOf('Counter', module).add('Basic', () => (
     <div>
-        <Counter />
+        <SideEffectProvider>
+            <Counter />
+        </SideEffectProvider>
     </div>
 ));

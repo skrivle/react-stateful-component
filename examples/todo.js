@@ -3,7 +3,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import uuid from 'uuid/v1';
-import createStatefulComponent, { update } from '../src/';
+import createStatefulComponent, { update, SideEffectProvider } from '../src/';
 
 const updateValue = (text: string) => ({
     type: 'UPDATE_VALUE',
@@ -100,6 +100,8 @@ const Todos = createStatefulComponent(() => ({
 
 storiesOf('Todo', module).add('Basic', () => (
     <div>
-        <Todos />
+        <SideEffectProvider>
+            <Todos />
+        </SideEffectProvider>
     </div>
 ));

@@ -3,7 +3,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow, mount } from 'enzyme';
-import createStatefulComponent, { update } from '../index';
+import createStatefulComponent, { update, getChildContext, SideEffectProvider } from '../index';
+
+const context = getChildContext();
 
 describe('createStatefulComponent', () => {
     it('it should create a stateful component without errors', () => {
@@ -15,7 +17,12 @@ describe('createStatefulComponent', () => {
 
         const div = document.createElement('div');
 
-        ReactDOM.render(<MyStateFulComponent />, div);
+        ReactDOM.render(
+            <SideEffectProvider>
+                <MyStateFulComponent />
+            </SideEffectProvider>,
+            div
+        );
     });
 
     describe('initialState', () => {
@@ -26,7 +33,7 @@ describe('createStatefulComponent', () => {
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />);
+            const wrapper = shallow(<MyStateFulComponent />, { context });
 
             expect(wrapper.find('div')).toHaveText('10');
         });
@@ -38,7 +45,7 @@ describe('createStatefulComponent', () => {
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
-            const wrapper = shallow(<MyStateFulComponent counter={20} />);
+            const wrapper = shallow(<MyStateFulComponent counter={20} />, { context });
 
             expect(wrapper.find('div')).toHaveText('20');
         });
@@ -52,7 +59,7 @@ describe('createStatefulComponent', () => {
                 render: ({ props }) => <div>{props.message}</div>
             }));
 
-            const wrapper = shallow(<MyStateFulComponent message={'Hello World'} />);
+            const wrapper = shallow(<MyStateFulComponent message={'Hello World'} />, { context });
 
             expect(wrapper.find('div')).toHaveText('Hello World');
         });
@@ -86,7 +93,7 @@ describe('createStatefulComponent', () => {
                 )
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />);
+            const wrapper = shallow(<MyStateFulComponent />, { context });
 
             expect(wrapper.find('.counter')).toHaveText('0');
 
@@ -114,7 +121,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            shallow(<MyStateFulComponent />);
+            shallow(<MyStateFulComponent />, { context });
         });
     });
 
@@ -133,7 +140,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />);
+            const wrapper = shallow(<MyStateFulComponent />, { context });
 
             wrapper.unmount();
         });
@@ -158,7 +165,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = shallow(<MyStateFulComponent value="initial" />);
+            const wrapper = shallow(<MyStateFulComponent value="initial" />, { context });
 
             wrapper.setProps({ value: 'new value' });
         });
@@ -194,7 +201,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent myProp="test" />);
+            const wrapper = mount(<MyStateFulComponent myProp="test" />, { context });
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -232,7 +239,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent myProp="test" />);
+            const wrapper = mount(<MyStateFulComponent myProp="test" />, { context });
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -249,7 +256,7 @@ describe('createStatefulComponent', () => {
                 shouldUpdate: () => false
             }));
 
-            const wrapper = mount(<MyStateFulComponent value="initial" />);
+            const wrapper = mount(<MyStateFulComponent value="initial" />, { context });
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -278,7 +285,7 @@ describe('createStatefulComponent', () => {
                 shouldUpdate: () => false
             }));
 
-            const wrapper = mount(<MyStateFulComponent />);
+            const wrapper = mount(<MyStateFulComponent />, { context });
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -305,7 +312,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent value="initial" />);
+            const wrapper = mount(<MyStateFulComponent value="initial" />, { context });
 
             wrapper.setProps({
                 value: 'new value'
@@ -340,7 +347,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent />);
+            const wrapper = mount(<MyStateFulComponent />, { context });
 
             expect(wrapper.find('.value')).toHaveText('initial');
 

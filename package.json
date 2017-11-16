@@ -65,5 +65,9 @@
     },
     "jest": {
         "setupTestFrameworkScriptFile": "./setup-tests.js"
+    },
+    "dependencies": {
+        "invariant": "^2.2.2",
+        "prop-types": "^15.6.0"
     }
 }
