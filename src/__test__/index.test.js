@@ -1,30 +1,12 @@
 // @flow
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { shallow, mount } from 'enzyme';
-import createStatefulComponent, { update, getChildContext, SideEffectProvider } from '../index';
+import createStatefulComponent, { update, getChildContext } from '../index';
 
 const context = getChildContext();
 
 describe('createStatefulComponent', () => {
-    it('it should create a stateful component without errors', () => {
-        const MyStateFulComponent = createStatefulComponent(() => ({
-            initialState: () => ({}),
-            reducer: state => update(state),
-            render: () => <div />
-        }));
-
-        const div = document.createElement('div');
-
-        ReactDOM.render(
-            <SideEffectProvider>
-                <MyStateFulComponent />
-            </SideEffectProvider>,
-            div
-        );
-    });
-
     describe('initialState', () => {
         it('it should set the initialState', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
