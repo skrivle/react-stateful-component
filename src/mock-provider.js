@@ -1,5 +1,7 @@
 // @flow
 
+// @TODO: move this to a separate module
+
 import { Component, Children, type Node } from 'react';
 import PropTypes from 'prop-types';
 import type { SideEffect, Reduce } from './types';
