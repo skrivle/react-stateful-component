@@ -67,7 +67,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
 
             invariant(
                 this.runSideEffectFromProvider,
-                'Could not find runSideEffect in context, please wrap the root component in a <Provider>.'
+                'Could not find runSideEffect in context, please wrap the root component in a <SideEffectProvider>.'
             );
         }
 
