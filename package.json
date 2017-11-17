@@ -9,8 +9,8 @@
     "scripts": {
         "lint": "eslint .",
         "flow": "flow check",
-        "jest:watch": "jest --watch",
         "test": "npm run lint && npm run flow && jest",
+        "test:watch": "jest --watch",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook",
         "precommit": "lint-staged",
@@ -49,6 +49,7 @@
         "jest-enzyme": "^4.0.1",
         "lint-staged": "^4.3.0",
         "prettier": "^1.7.4",
+        "raf": "^3.4.0",
         "react": "^16.0.0",
         "react-dom": "^16.0.0",
         "react-test-renderer": "^16.0.0",
