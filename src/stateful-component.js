@@ -8,35 +8,37 @@ import type { Update } from './update';
 
 type Action = {};
 
-type Self<P, S, A> = {
+type Self<P, S, A, V> = {
     state: S,
     props: P,
-    reduce: Reduce<A>
+    reduce: Reduce<A>,
+    vars: V
 };
 
-type StatefulComponentDef<P: {}, S: {}, A: Action> = {|
+type StatefulComponentDef<P: {}, S: {}, A: Action, V> = {|
     initialState: (props: P) => S,
+    vars?: (props: P) => V,
     reducer: (state: S, action: A) => Update<S, A>,
-    render: (self: Self<P, S, A>) => Node,
-    didMount?: (self: Self<P, S, A>) => void,
-    willUnmount?: (self: Self<P, S, A>) => void,
-    willReceiveProps?: (nextProps: P, self: Self<P, S, A>) => void,
-    willUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A>) => void,
-    didUpdate?: (prevSelf: {| state: S, props: P |}, self: Self<P, S, A>) => void,
-    shouldUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A>) => boolean
+    render: (self: Self<P, S, A, V>) => Node,
+    didMount?: (self: Self<P, S, A, V>) => void,
+    willUnmount?: (self: Self<P, S, A, V>) => void,
+    willReceiveProps?: (nextProps: P, self: Self<P, S, A, V>) => void,
+    willUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A, V>) => void,
+    didUpdate?: (prevSelf: {| state: S, props: P |}, self: Self<P, S, A, V>) => void,
+    shouldUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A, V>) => boolean
 |};
 
-type GetDefinition<P, S, A> = () => StatefulComponentDef<P, S, A>;
+type GetDefinition<P, S, A, V> = () => StatefulComponentDef<P, S, A, V>;
 
-export default function createStatefulComponent<P: {}, S: {}, A: Action>(
-    getDefinition: GetDefinition<P, S, A>
+export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
+    getDefinition: GetDefinition<P, S, A, V>
 ): ComponentType<P> {
     const definition = getDefinition();
 
     return class extends Component<P, S> {
-        definition: StatefulComponentDef<P, S, A>;
         reduce: Reduce<A>;
-        runSideEffectFromProvider: (SideEffect: ?SideEffect<A>, reduce: Reduce<A>) => void;
+        sideEffectRunner: (SideEffect: ?SideEffect<A>, reduce: Reduce<A>) => void;
+        vars: V;
 
         static contextTypes = {
             runSideEffect: PropTypes.func.isRequired
@@ -63,23 +65,26 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
         constructor(props: P, context: Object) {
             super(props, context);
 
-            this.runSideEffectFromProvider = context.runSideEffect;
+            this.sideEffectRunner = context.runSideEffect;
 
             invariant(
-                this.runSideEffectFromProvider,
+                this.sideEffectRunner,
                 'Could not find runSideEffect in context, please wrap the root component in a <SideEffectProvider>.'
             );
+
+            if (definition.vars) this.vars = definition.vars(this.props);
         }
 
         runSideEffect(sideEffect: ?SideEffect<A>) {
-            this.runSideEffectFromProvider(sideEffect, this.reduce);
+            this.sideEffectRunner(sideEffect, this.reduce);
         }
 
-        getSelf() {
+        getSelf(): Self<P, S, A, V> {
             return {
                 state: this.state,
                 props: this.props,
-                reduce: this.reduce
+                reduce: this.reduce,
+                vars: this.vars
             };
         }
 
@@ -141,11 +146,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
         }
 
         render() {
-            return definition.render({
-                state: this.state,
-                props: this.props,
-                reduce: this.reduce
-            });
+            return definition.render(this.getSelf());
         }
     };
 }
