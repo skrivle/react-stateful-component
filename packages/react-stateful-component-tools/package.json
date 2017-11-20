@@ -1,6 +1,6 @@
 {
     "name": "react-stateful-component-tools",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Tools to work with react-stateful-component.",
     "main": "lib/index.js",
     "files": [
@@ -12,12 +12,11 @@
     },
     "author": "Jelle Versele",
     "license": "MIT",
-    "devDependencies": {},
     "peerDependencies": {
         "react": "^15.0.0-0 || ^16.0.0-0"
     },
     "dependencies": {
         "prop-types": "^15.6.0",
-        "react-stateful-component": "0.0.1"
+        "react-stateful-component": "^0.0.2"
     }
 }
