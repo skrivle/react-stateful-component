@@ -4,8 +4,10 @@ import { Component, Children, type Node } from 'react';
 import PropTypes from 'prop-types';
 import type { SideEffect, Reduce } from './types';
 
+export const SIDE_EFFECT_RUNNER_CONTEXT_KEY = 'runSideEffect';
+
 export const getChildContext = () => ({
-    runSideEffect: (sideEffect: ?SideEffect<*>, reduce: Reduce<*>) => {
+    [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (sideEffect: ?SideEffect<*>, reduce: Reduce<*>) => {
         if (!sideEffect) return;
         sideEffect(reduce);
     }
@@ -13,7 +15,7 @@ export const getChildContext = () => ({
 
 export default class SideEffectProvider extends Component<{ children: Node }> {
     static childContextTypes = {
-        runSideEffect: PropTypes.func.isRequired
+        [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired
     };
 
     getChildContext() {
