@@ -4,7 +4,7 @@
     "scripts": {
         "lint": "eslint .",
         "flow": "flow check",
-        "test": "npm run lint && npm run flow && jest && npm run build",
+        "test": "lerna bootstrap && npm run lint && npm run flow && jest && npm run build",
         "test:watch": "jest --watch",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook",
