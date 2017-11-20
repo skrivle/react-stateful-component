@@ -3,7 +3,9 @@
     "version": "0.0.1",
     "description": "Create stateful React components in a functional way.",
     "main": "lib/index.js",
-    "files": ["lib"],
+    "files": [
+        "lib"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/vejersele/react-stateful-component.git"
@@ -15,7 +17,8 @@
         "react": "^15.0.0-0 || ^16.0.0-0"
     },
     "dependencies": {
-        "invariant": "2.2.2",
-        "prop-types": "15.6.0"
+        "invariant": "^2.2.2",
+        "prop-types": "^15.6.0",
+        "proptypes": "^1.1.0"
     }
 }

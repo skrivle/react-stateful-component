@@ -3,6 +3,7 @@
 import { Component, type Node, type ComponentType } from 'react';
 import PropTypes from 'prop-types';
 import invariant from 'invariant';
+import { SIDE_EFFECT_RUNNER_CONTEXT_KEY } from './provider';
 import type { SideEffect, Reduce } from './types';
 import type { Update } from './update';
 
@@ -41,7 +42,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
         sideEffectRunner: (SideEffect: ?SideEffect<A>, reduce: Reduce<A>) => void;
         vars: V;
 
-        static contextTypes = { runSideEffect: PropTypes.func.isRequired };
+        static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
         static displayName = definition.displayName;
 
         definition = definition;
@@ -65,7 +66,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
         constructor(props: P, context: Object) {
             super(props, context);
 
-            this.sideEffectRunner = context.runSideEffect;
+            this.sideEffectRunner = context[SIDE_EFFECT_RUNNER_CONTEXT_KEY];
 
             invariant(
                 this.sideEffectRunner,
