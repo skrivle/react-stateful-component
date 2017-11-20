@@ -16,6 +16,7 @@ type Self<P, S, A, V> = {
 };
 
 type StatefulComponentDef<P: {}, S: {}, A: Action, V> = {|
+    displayName?: string,
     initialState: (props: P) => S,
     vars?: (props: P) => V,
     reducer: (state: S, action: A) => Update<S, A>,
@@ -40,9 +41,8 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
         sideEffectRunner: (SideEffect: ?SideEffect<A>, reduce: Reduce<A>) => void;
         vars: V;
 
-        static contextTypes = {
-            runSideEffect: PropTypes.func.isRequired
-        };
+        static contextTypes = { runSideEffect: PropTypes.func.isRequired };
+        static displayName = definition.displayName;
 
         definition = definition;
         state = definition.initialState(this.props);

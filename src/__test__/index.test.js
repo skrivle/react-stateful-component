@@ -336,4 +336,18 @@ describe('createStatefulComponent', () => {
             wrapper.find('.update').simulate('click');
         });
     });
+
+    describe('displayName', () => {
+        it('should set the displayName', () => {
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                displayName: 'MyComponent',
+                initialState: () => ({}),
+                reducer: state => update(state),
+                render: () => <div />
+            }));
+
+            const wrapper = mount(<MyStateFulComponent />, { context });
+            expect(wrapper.find('MyComponent').length).toEqual(1);
+        });
+    });
 });
