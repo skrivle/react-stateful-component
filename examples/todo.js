@@ -3,7 +3,10 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import uuid from 'uuid/v1';
-import createStatefulComponent, { update, SideEffectProvider } from '../src/';
+import createStatefulComponent, {
+    update,
+    SideEffectProvider
+} from '../packages/react-stateful-component/src';
 
 const updateValue = (text: string) => ({
     type: 'UPDATE_VALUE',

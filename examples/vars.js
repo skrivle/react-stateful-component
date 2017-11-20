@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStatefulComponent, { update, SideEffectProvider } from '../src/';
+import createStatefulComponent, {
+    update,
+    SideEffectProvider
+} from '../packages/react-stateful-component/src';
 
 const add = () => ({ type: 'ADD' });
 
@@ -39,7 +42,7 @@ const Counter = createStatefulComponent(() => ({
 }));
 
 const Controller = createStatefulComponent(() => ({
-    // vars: () => ({}),
+    vars: () => ({}),
     initialState: () => ({
         isCounterVisible: false
     }),
