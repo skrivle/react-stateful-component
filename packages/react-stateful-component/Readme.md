@@ -10,12 +10,15 @@ Install React Stateful Component using npm:
 
 Import React Stateful Component into your project:
 
-```
-import createStatefulComponent, {update} from 'react=stateful-component';
+```javascript
+import createStatefulComponent, {update} from 'react-stateful-component';
 ```
 Next, write your component:
 
-```
+```javascript
+const add = () => ({ type: 'ADD' });
+const subtract = () => ({ type: 'SUBTRACT' });
+
 const Counter = createStatefulComponent(() => ({
     initialState: () => ({
         counter: 0
@@ -25,23 +28,30 @@ const Counter = createStatefulComponent(() => ({
 
         switch (action.type) {
             case 'ADD':
-                return update({ counter: counter + 1 });
+                return update.state({ counter: counter + 1 });
             case 'SUBTRACT':
-                return update({ counter: counter - 1 });
+                return update.state({ counter: counter - 1 });
             default:
-                return update(state);
+                return update.nothing();
         }
     },
     render: ({ state, reduce }) => (
         <div>
-            <button onClick={() => reduce({type: 'ADD'}}>
-                +
-            </button>
+            <button onClick={() => reduce(add())}>+</button>
             <span>{state.counter}</span>
-            <button onClick={() => reduce({type: 'SUBTRACT'})}>
-                -
-            </button>
+            <button onClick={() => reduce(subtract())}>-</button>
         </div>
     )
 }));
+```
+
+Wrap the component in a <SideEffectProvider/> in order to use it:
+
+```javascript
+ReactDOM.render(
+    <SideEffectProvider>
+        <Counter />
+    </SideEffectProvider>,
+    document.getElementById('app')
+)
 ```
