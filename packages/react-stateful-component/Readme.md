@@ -1,6 +1,15 @@
 # React Stateful Component
 
+**warning**: This is work in progress, api's might still change.
+
 React Stateful Component provides tools to create stateful React components using just functions.
+
+features;
+- Uses a reducer to manage state
+- The reducer can schedule side effects following the same pattern as Elm and Reason-React
+- Side effects are run outside of the component, meaning you can test your components without having to execute side effects
+- Supports React lifeCycle hooks and instance variables
+- Static type checking with flow-type
 
 ## Getting started
 

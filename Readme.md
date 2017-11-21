@@ -2,12 +2,9 @@
 
 [![Build Status](https://travis-ci.org/vejersele/react-stateful-component.svg?branch=master)](https://travis-ci.org/vejersele/react-stateful-component)
 
-This is work in progress ...
+**Warning:** This is work in progress, api's might still change.
 
 Create stateful React components in a more functional way. Heavily inspired by ReasonReact's api
 https://reasonml.github.io/reason-react/
 
-Goals:
-- flow types
-- SideEffect support
-- support for lifecycle hooks
+[Documentation](packages/react-stateful-component/Readme.md)
