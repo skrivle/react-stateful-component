@@ -2,16 +2,22 @@
 
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import createStatefulComponent, { update, getChildContext } from '../index';
-
-const context = getChildContext();
+import createStatefulComponent, { update, SIDE_EFFECT_RUNNER_CONTEXT_KEY } from '../index';
 
 describe('createStatefulComponent', () => {
+    let context;
+
+    beforeEach(() => {
+        context = {
+            [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: jest.fn()
+        };
+    });
+
     describe('initialState', () => {
         it('it should set the initialState', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 10 }),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
@@ -23,7 +29,7 @@ describe('createStatefulComponent', () => {
         it('it should take props into account', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: props => ({ counter: props.counter }),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
@@ -37,7 +43,7 @@ describe('createStatefulComponent', () => {
         it('should take props into account', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ counter: 0 }),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: ({ props }) => <div>{props.message}</div>
             }));
 
@@ -55,14 +61,14 @@ describe('createStatefulComponent', () => {
                     const { counter } = state;
                     switch (action.type) {
                         case 'ADD':
-                            return update({ counter: counter + 1 });
+                            return update.state({ counter: counter + 1 });
                         case 'SUBTRACT':
-                            return update({ counter: counter - 1 });
+                            return update.state({ counter: counter - 1 });
                         default:
-                            return update(state);
+                            return update.nothing();
                     }
                 },
-                render: ({ state: { counter }, reduce }) => (
+                render: ({ reduce }) => (
                     <div>
                         <button className="add" onClick={() => reduce({ type: 'ADD' })}>
                             add
@@ -70,22 +76,91 @@ describe('createStatefulComponent', () => {
                         <button className="subtract" onClick={() => reduce({ type: 'SUBTRACT' })}>
                             subtract
                         </button>
-                        <div className="counter">{counter}</div>
+                        <button className="nothing" onClick={() => reduce({ type: 'DO_NOTHING' })}>
+                            nothing
+                        </button>
                     </div>
                 )
             }));
 
             const wrapper = shallow(<MyStateFulComponent />, { context });
 
-            expect(wrapper.find('.counter')).toHaveText('0');
+            expect(wrapper.state()).toEqual({ counter: 0 });
 
             wrapper.find('.add').simulate('click');
-
-            expect(wrapper.find('.counter')).toHaveText('1');
+            expect(wrapper.state()).toEqual({ counter: 1 });
 
             wrapper.find('.subtract').simulate('click');
+            expect(wrapper.state()).toEqual({ counter: 0 });
 
-            expect(wrapper.find('.counter')).toHaveText('0');
+            wrapper.find('.nothing').simulate('click');
+            expect(wrapper.state()).toEqual({ counter: 0 });
+        });
+
+        it('should schedule sideEffects', () => {
+            let reduceFn;
+
+            const sideEffect = () => {};
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({}),
+                reducer: (state, action) => {
+                    switch (action.type) {
+                        case 'TEST':
+                            return update.sideEffect(sideEffect);
+                        default:
+                            return update.nothing();
+                    }
+                },
+                render: ({ reduce }) => {
+                    reduceFn = reduce;
+                    return (
+                        <div>
+                            <button onClick={() => reduce({ type: 'TEST' })}>click</button>
+                        </div>
+                    );
+                }
+            }));
+
+            const wrapper = shallow(<MyStateFulComponent />, { context });
+
+            wrapper.find('button').simulate('click');
+
+            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(sideEffect, reduceFn);
+        });
+
+        it('should update state and schedule sideEffects', () => {
+            let reduceFn;
+
+            const sideEffect = () => {};
+
+            const MyStateFulComponent = createStatefulComponent(() => ({
+                initialState: () => ({ value: 'initial' }),
+                reducer: (state, action) => {
+                    switch (action.type) {
+                        case 'TEST':
+                            return update.stateAndSideEffect({ value: 'updated' }, sideEffect);
+                        default:
+                            return update.nothing();
+                    }
+                },
+                render: ({ state: { value }, reduce }) => {
+                    reduceFn = reduce;
+                    return (
+                        <div>
+                            <button onClick={() => reduce({ type: 'TEST' })}>click</button>
+                            <div className="value">{value}</div>
+                        </div>
+                    );
+                }
+            }));
+
+            const wrapper = shallow(<MyStateFulComponent />, { context });
+
+            wrapper.find('button').simulate('click');
+
+            expect(wrapper.state()).toEqual({ value: 'updated' });
+            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(sideEffect, reduceFn);
         });
     });
 
@@ -93,7 +168,7 @@ describe('createStatefulComponent', () => {
         it('should have access to self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: () => <div />,
                 didMount: ({ state, props, reduce }) => {
                     expect(state).toBeDefined();
@@ -111,7 +186,7 @@ describe('createStatefulComponent', () => {
         it('should have access to self', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: () => <div />,
                 willUnmount: ({ state, props, reduce }) => {
                     expect(state).toBeDefined();
@@ -134,7 +209,7 @@ describe('createStatefulComponent', () => {
                 initialState: props => ({
                     value: props.value
                 }),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: () => <div />,
                 willReceiveProps: (nextProps, { state, props, reduce }) => {
                     expect(nextProps.value).toBe('new value');
@@ -164,7 +239,7 @@ describe('createStatefulComponent', () => {
                 initialState: () => ({
                     value: 'initial'
                 }),
-                reducer: (state, action) => update({ value: action.value }),
+                reducer: (state, action) => update.state({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -202,7 +277,7 @@ describe('createStatefulComponent', () => {
                 initialState: () => ({
                     value: 'initial'
                 }),
-                reducer: (state, action) => update({ value: action.value }),
+                reducer: (state, action) => update.state({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -233,7 +308,7 @@ describe('createStatefulComponent', () => {
         it('should prevent the component from updating when new props are passed and shouldUpdate is returning false', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
                 shouldUpdate: () => false
             }));
@@ -257,7 +332,7 @@ describe('createStatefulComponent', () => {
 
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
-                reducer: (state, action) => update({ value: action.value }),
+                reducer: (state, action) => update.state({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -279,7 +354,7 @@ describe('createStatefulComponent', () => {
         it('should have access to nextSelf and self when props are updated', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
                 shouldUpdate: (nextSelf, { state, props, reduce }) => {
                     expect(nextSelf.state).toBeDefined();
@@ -309,7 +384,7 @@ describe('createStatefulComponent', () => {
 
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
-                reducer: (state, action) => update({ value: action.value }),
+                reducer: (state, action) => update.state({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
                     <div>
                         <button className="update" onClick={() => reduce(setValue('new value'))} />
@@ -342,7 +417,7 @@ describe('createStatefulComponent', () => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 displayName: 'MyComponent',
                 initialState: () => ({}),
-                reducer: state => update(state),
+                reducer: () => update.nothing(),
                 render: () => <div />
             }));
 

@@ -20,11 +20,11 @@ const Counter = createStatefulComponent(() => ({
 
         switch (action.type) {
             case 'ADD':
-                return update({ counter: counter + 1 });
+                return update.state({ counter: counter + 1 });
             case 'SUBTRACT':
-                return update({ counter: counter - 1 });
+                return update.state({ counter: counter - 1 });
             default:
-                return update(state);
+                return update.nothing();
         }
     },
     render: ({ state, reduce }) => (

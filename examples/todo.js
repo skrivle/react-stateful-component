@@ -50,12 +50,12 @@ const Todos = createStatefulComponent(() => ({
     reducer: (state, action) => {
         switch (action.type) {
             case 'UPDATE_VALUE':
-                return update({
+                return update.state({
                     ...state,
                     value: action.text
                 });
             case 'ADD_TODO_REQUESTED':
-                return update(
+                return update.stateAndSideEffect(
                     {
                         ...state,
                         value: '',
@@ -64,13 +64,13 @@ const Todos = createStatefulComponent(() => ({
                     saveTodo(state.value)
                 );
             case 'ADD_TODO_RECEIVED':
-                return update({
+                return update.state({
                     ...state,
                     isPending: false,
                     items: [...state.items, action.todo]
                 });
             default:
-                return update(state);
+                return update.nothing();
         }
     },
     render: ({ state: { items, value, isPending }, reduce }) => {

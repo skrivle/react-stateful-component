@@ -10,7 +10,7 @@ describe('Provider', () => {
     it('it should render a stateful component without errors', () => {
         const MyStateFulComponent = createStatefulComponent(() => ({
             initialState: () => ({}),
-            reducer: state => update(state),
+            reducer: () => update.nothing(),
             render: () => <div />
         }));
 
@@ -35,11 +35,11 @@ describe('Provider', () => {
             reducer: (state, action) => {
                 switch (action.type) {
                     case 'START':
-                        return update(state, sideEffect);
+                        return update.stateAndSideEffect(state, sideEffect);
                     case 'FINISH':
-                        return update({ content: 'done' });
+                        return update.state({ content: 'done' });
                     default:
-                        return update(state);
+                        return update.nothing();
                 }
             },
             render: ({ reduce, state }) => (

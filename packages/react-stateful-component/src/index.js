@@ -1,7 +1,8 @@
 // @flow
 
+import * as update from './update';
+export { update };
 export { default } from './stateful-component';
-export { default as update } from './update';
 export {
     default as SideEffectProvider,
     getChildContext,

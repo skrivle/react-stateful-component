@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import invariant from 'invariant';
 import { SIDE_EFFECT_RUNNER_CONTEXT_KEY } from './provider';
 import type { SideEffect, Reduce } from './types';
-import type { Update } from './update';
+import { type Update, getSideEffect, getState } from './update';
 
 type Action = {};
 
@@ -54,10 +54,11 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
             this.setState(
                 prevState => {
                     const update = definition.reducer(prevState, action);
+                    const newState = getState(update);
 
-                    sideEffect = update.sideEffect;
+                    sideEffect = getSideEffect(update);
 
-                    return update.state;
+                    return newState ? newState : prevState;
                 },
                 () => this.runSideEffect(sideEffect)
             );

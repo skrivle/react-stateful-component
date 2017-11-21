@@ -19,9 +19,9 @@ const Counter = createStatefulComponent(() => ({
 
         switch (action.type) {
             case 'ADD':
-                return update({ counter: counter + 1 });
+                return update.state({ counter: counter + 1 });
             default:
-                return update(state);
+                return update.nothing();
         }
     },
     didMount({ reduce, vars }) {
@@ -49,9 +49,9 @@ const Controller = createStatefulComponent(() => ({
     reducer: (state, action) => {
         switch (action.type) {
             case 'TOGGLE_COUNTER':
-                return update({ isCounterVisible: !state.isCounterVisible });
+                return update.state({ isCounterVisible: !state.isCounterVisible });
             default:
-                return update(state);
+                return update.nothing();
         }
     },
     render: ({ state, reduce }) => (
