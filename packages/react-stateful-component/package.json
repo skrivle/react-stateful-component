@@ -12,6 +12,16 @@
     },
     "author": "Jelle Versele",
     "license": "MIT",
+    "keywords": [
+         "react",
+         "javascript",
+         "side-effects",
+         "flowtypes",
+         "reducer",
+         "stateful",
+         "component",
+         "functional"
+    ],
     "peerDependencies": {
         "prop-types": ">=15",
         "react": ">=15"
