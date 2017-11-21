@@ -1,6 +1,6 @@
 {
     "name": "react-stateful-component",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Create stateful React components in a functional way.",
     "main": "lib/index.js",
     "files": [
@@ -13,14 +13,14 @@
     "author": "Jelle Versele",
     "license": "MIT",
     "keywords": [
-         "react",
-         "javascript",
-         "side-effects",
-         "flowtypes",
-         "reducer",
-         "stateful",
-         "component",
-         "functional"
+        "react",
+        "javascript",
+        "side-effects",
+        "flowtypes",
+        "reducer",
+        "stateful",
+        "component",
+        "functional"
     ],
     "peerDependencies": {
         "prop-types": ">=15",
