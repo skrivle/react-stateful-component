@@ -6,6 +6,9 @@
 
 Create stateful React components in a functional way, with side effect support. Heavily inspired by ReasonReact's api.
 
+- Uses a reducer to manage state
+- Simple side effect model
+- Flow type support
 
 [Documentation](packages/react-stateful-component/Readme.md)
 
