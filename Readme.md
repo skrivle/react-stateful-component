@@ -36,7 +36,7 @@ Like in Elm and ReactReason, side effect are scheduled from within the reducer, 
 ```javascript
 import React from 'react';
 import ReactDOM from 'react-dom';
-import createStatefulComponent, { update, SideEffectProvider } from '../packages/react-stateful-component/src';
+import createStatefulComponent, { update, SideEffectProvider } from 'react-stateful-component';
 
 // Actions
 const add = () => ({ type: 'ADD' });
