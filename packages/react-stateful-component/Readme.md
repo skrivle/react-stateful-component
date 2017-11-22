@@ -57,6 +57,9 @@ const Counter = createStatefulComponent(() => ({
 Wrap the component in a SideEffectProvider in order to use it:
 
 ```javascript
+import {SideEffectProvider} from 'react-stateful-component';
+import Counter from './counter';
+
 ReactDOM.render(
     <SideEffectProvider>
         <Counter />
