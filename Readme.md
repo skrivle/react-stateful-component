@@ -31,6 +31,51 @@ React Stateful Component uses a SideEffectProvider to run side effects. This mea
 
 Like in Elm and ReactReason, side effect are scheduled from within the reducer, and they are just functions. Meaning you don't have to deal with very complex side effect models.
 
+## Code sample
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import createStatefulComponent, { update, SideEffectProvider } from '../packages/react-stateful-component/src';
+
+// Actions
+const add = () => ({ type: 'ADD' });
+const subtract = () => ({ type: 'SUBTRACT' });
+
+const Counter = createStatefulComponent(() => ({
+    initialState: () => ({
+        counter: 0
+    }),
+    reducer: (state, action) => {
+        const { counter } = state;
+
+        switch (action.type) {
+            case 'ADD':
+                return update.state({ counter: counter + 1 });
+            case 'SUBTRACT':
+                return update.state({ counter: counter - 1 });
+            default:
+                return update.nothing();
+        }
+    },
+    render: ({ state: {counter}, reduce }) => (
+        <div>
+            <button onClick={() => reduce(add())}>+</button>
+            <span>{counter}</span>
+            <button onClick={() => reduce(subtract())}>-</button>
+        </div>
+    )
+}));
+
+ReactDOM.render(
+    <SideEffectProvider>
+        <Counter />
+    </SideEffectProvider>,
+    document.getElementById('app')
+);
+
+```
+
 ## Examples
 
 An example directory is included in this repo. You can check it out locally by running:
@@ -45,7 +90,7 @@ this will start storybook on http://localhost:6006/
 
 ## Contributing
 
-All contribution are more then welcome, feel free to open issues and/pr's.
+All contribution are more then welcome, feel free to open issues and pr's.
 
 running tests:
 ```
