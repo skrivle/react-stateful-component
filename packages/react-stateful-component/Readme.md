@@ -91,7 +91,7 @@ const myReducer = (state, action) => {
         case 'SUBTRACT':
             return update.state({counter: state.counter - 1});
         default:
-            update.nothing();
+            return update.nothing();
     }
 }
 ```
