@@ -4,7 +4,7 @@
 
 React Stateful Component provides tools to create stateful React components using just functions.
 
-features;
+Features:
 - Uses a reducer to manage state
 - The reducer can schedule side effects following the same pattern as Elm and Reason-React
 - Side effects are run outside of the component, meaning you can test your components without having to execute side effects
@@ -64,3 +64,46 @@ ReactDOM.render(
     document.getElementById('app')
 )
 ```
+
+## Managing state
+
+React Stateful Component uses a reducer to manage the components state. Since all state updates
+happen in one place, it'll help you understand the state of the component. Because the reducer
+is just a function, it can easily be extracted and unit tested separately.
+
+Just like in Redux the reducer works with State and Actions, the only difference is the return type
+of the reducer.
+
+## Update types
+Since the reducer is not only responsible for updating the state but can also schedule side effects,
+only returning the state from the reducer wouldn't be really useful. Instead we will return an
+`Update<S, A>`. You should look at an Update as an instruction for the component. It can either update
+the state, schedule a side effect, do both or instruct the component to just do nothing.
+
+Example:
+```javascript
+import {update} from 'react-stateful-component';
+
+const myReducer = (state, action) => {
+    switch(action.type) {
+        case 'ADD':
+            return update.state({counter: state.counter + 1});
+        case 'SUBTRACT':
+            return update.state({counter: state.counter - 1});
+        default:
+            update.nothing();
+    }
+}
+```
+
+### update.state(state)
+`<S>(state: S): UpdateState<S>`
+
+### update.sideEffect(sideEffect)
+`<A>(sideEffect: SideEffect<A>): UpdateSideEffect<A>`
+
+### update.stateAndSideEffect(state, sideEffect)
+`<S, A>(state: S, sideEffect: SideEffect<A>): UpdateStateAndSideEffect<S, A>`
+
+### update.nothing()
+`(): UpdateNothing`
