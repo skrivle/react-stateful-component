@@ -67,7 +67,7 @@ ReactDOM.render(
 
 ## Managing state
 
-React Stateful Component uses a reducer to manage the components state. Since all state updates
+React Stateful Component uses a reducer to manage the component's state. Since all state updates
 happen in one place, it'll help you understand the state of the component. Because the reducer
 is just a function, it can easily be extracted and unit tested separately.
 
