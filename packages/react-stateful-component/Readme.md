@@ -173,3 +173,11 @@ const myReducer = (state, action) => {
     }
 }
 ```
+
+## Lifecycle hooks
+
+[TODO]
+
+## Instance variables
+
+[TODO]
