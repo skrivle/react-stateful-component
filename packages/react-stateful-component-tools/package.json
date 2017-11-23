@@ -1,6 +1,6 @@
 {
     "name": "react-stateful-component-tools",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "Tools to work with react-stateful-component.",
     "main": "lib/index.js",
     "files": [
@@ -17,6 +17,6 @@
         "react": ">=15"
     },
     "dependencies": {
-        "react-stateful-component": "^0.0.6"
+        "react-stateful-component": "^0.0.7"
     }
 }

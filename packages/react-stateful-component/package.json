@@ -1,6 +1,6 @@
 {
     "name": "react-stateful-component",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "Create stateful React components in a functional way.",
     "main": "lib/index.js",
     "files": [
