@@ -10,7 +10,8 @@ Create stateful React components in a functional way, with side effect support. 
 - Simple side effect model
 - Flow type support
 
-[Documentation](packages/react-stateful-component/Readme.md)
+
+> [React Stateful Component Documentation](packages/react-stateful-component/Readme.md)
 
 ## Making the case for functional stateful components.
 
