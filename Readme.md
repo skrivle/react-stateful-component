@@ -18,7 +18,7 @@ Create stateful React components in a functional way, with side effect support. 
 
 React class components aren't always easy to keep maintainable, and it gets harder as the amount of state the component is managing grows. As setState() calls get spread across multiple methods, it becomes more difficult to have a good understanding of what state changes are happening within the component.
 
-Redux has provided us with very good solution to this problem. It uses pure reducer functions and a store to centralise your state management. However Redux also comes with some downsides when working on larger apps.
+Redux has provided us with a very good solution to this problem. It uses pure reducer functions and a store to centralise your state management. However Redux also comes with some downsides when working on larger apps.
 
 When building larger apps, you typically want to separate your app into multiple smaller apps or features. Each of these mini apps having their own responsibilities and thus their own state to manage. While Redux provides us with the ability to have separate state branches for these individual mini apps, the state still lives in the same single store. This can sometimes lead to state that gets shared and actions that get reduced by multiple mini apps, creating a dependency between different sub sections of your app. Of course this isn't always a downside, sometimes it's even desirable, but in some situations you want to enforce that separation a little bit more.
 
@@ -32,7 +32,7 @@ In order to keep a component clean and testable we want to push everything that 
 
 React Stateful Component uses a SideEffectProvider to run side effects. This means that a component will never execute side effects itself it will only schedule them.
 
-Like in Elm and ReactReason, side effect are scheduled from within the reducer, and they are just functions. Meaning you don't have to deal with very complex side effect models.
+Like in Elm and ReactReason, side effects are scheduled from within the reducer. Side effect are regular functions receiving reduce() as a parameter. Meaning you don't have to deal with very complex side effect models.
 
 ## Code sample
 
@@ -93,7 +93,7 @@ this will start storybook on http://localhost:6006/
 
 ## Contributing
 
-All contribution are more then welcome, feel free to open issues and pr's.
+feel free to open issues and pr's!
 
 running tests:
 ```

@@ -118,7 +118,7 @@ In order to keep a component clean and testable we try to push everything that i
 
 Side effects are functions that have access to `reduce()`. This means they can reduce actions and by doing so trigger state changes within the component.
 
-For example, a side effect can be used for async tasks like fetching data from an api or to start timers, etc ...
+For example, a side effect can be used for async tasks like fetching data from an api or to start timers, but also to read from or write to localStorage.
 
 The type signature of a side effect looks like this:
 ```javascript
