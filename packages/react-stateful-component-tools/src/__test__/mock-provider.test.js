@@ -1,24 +1,32 @@
-import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
+import { mount } from 'enzyme';
 import PropTypes from 'prop-types';
 import { SIDE_EFFECT_RUNNER_CONTEXT_KEY } from 'react-stateful-component';
 import { MockSideEffectProvider } from '../index';
 
 describe('MockSideEffectProvider', () => {
-    it('Should be able to intercept sideEffects', () => {
-        let runSideEffect;
+    let runSideEffect;
 
-        class MockComponent extends Component {
-            static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
-            constructor(props, context) {
-                super(props);
-                runSideEffect = context[SIDE_EFFECT_RUNNER_CONTEXT_KEY];
-            }
-            render() {
-                return <div />;
-            }
+    class MockComponent extends Component {
+        static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
+        constructor(props, context) {
+            super(props);
+            runSideEffect = context[SIDE_EFFECT_RUNNER_CONTEXT_KEY];
         }
+        render() {
+            return <div />;
+        }
+    }
 
+    it('Should not throw any errors', () => {
+        mount(
+            <MockSideEffectProvider>
+                <MockComponent />
+            </MockSideEffectProvider>
+        );
+    });
+
+    it('Should be able to intercept sideEffects', () => {
         const sideEffect = jest.fn();
         const mockSideEffect = jest.fn();
 
@@ -28,13 +36,10 @@ describe('MockSideEffectProvider', () => {
             }
         };
 
-        const div = document.createElement('div');
-
-        ReactDOM.render(
+        mount(
             <MockSideEffectProvider mockRunner={mockSideEffectRunner}>
                 <MockComponent />
-            </MockSideEffectProvider>,
-            div
+            </MockSideEffectProvider>
         );
 
         runSideEffect(sideEffect);

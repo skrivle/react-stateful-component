@@ -24,7 +24,7 @@ When building larger apps, you typically want to separate your app into multiple
 
 React Stateful Component allows you to do that because it's state is scoped to the component (it's just a React class component behind the scenes).
 
-Another benefit of using component scoped state is that it can be wired on the fly. As features may live in different sub sections of your app, you don't want to wire all of your state up front. Instead you want it to be available whenever you need it. This is harder to do with Redux since it's single store requires you to setup your app's state all upfront.
+Another benefit of using component scoped state is that it can be wired on the fly. As features may live in different sub sections of your app, you don't want to wire all of your state up front. Instead you want it to be available whenever you need it. Having the state scoped to the component also helps with code splitting.
 
 ### Side effects
 
