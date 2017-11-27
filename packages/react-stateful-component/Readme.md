@@ -88,8 +88,8 @@ const myComponentDefinition = () => ({
 
 A component definition should define at least an initialState, reducer, and render function. At
 first sight this might look pretty similar to defining a class based component. There is an
-important difference though. All of these function can be run in isolation because they can not use
-`this` and their ouput is based in their input parameters.
+important difference though. All of these functions can be run in isolation because they can not use
+`this` and their output is based in their input parameters.
 
 Once you have your component definition, you can use the `createStatefulComponent` function to
 actually create the Component.
