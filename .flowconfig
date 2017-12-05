@@ -4,6 +4,3 @@
 module.name_mapper='\(react-stateful-component[^/]*\)' -> '<PROJECT_ROOT>/packages/\1/src/index.js'
 include_warnings=true
 emoji=true
-
-[version]
-^0.59.0
