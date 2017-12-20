@@ -165,7 +165,7 @@ describe('createStatefulComponent', () => {
     });
 
     describe('didMount', () => {
-        it('should have access to self', done => {
+        it('should have access to Me', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
@@ -183,7 +183,7 @@ describe('createStatefulComponent', () => {
     });
 
     describe('unMount', () => {
-        it('should have access to self', done => {
+        it('should have access to Me', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
@@ -204,7 +204,7 @@ describe('createStatefulComponent', () => {
     });
 
     describe('willReceiveProps', () => {
-        it('should have access to nextProps and self', done => {
+        it('should have access to nextProps and Me', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: props => ({
                     value: props.value
@@ -246,9 +246,9 @@ describe('createStatefulComponent', () => {
                         <div className="value">{value}</div>
                     </div>
                 ),
-                didUpdate: (prevSelf, { state, props, reduce }) => {
-                    expect(prevSelf.state).toEqual({ value: 'initial' });
-                    expect(prevSelf.props).toEqual({ myProp: 'test' });
+                didUpdate: (prevMe, { state, props, reduce }) => {
+                    expect(prevMe.state).toEqual({ value: 'initial' });
+                    expect(prevMe.props).toEqual({ myProp: 'test' });
 
                     expect(state).toEqual({ value: 'new value' });
                     expect(props).toEqual({ myProp: 'test' });
@@ -284,9 +284,9 @@ describe('createStatefulComponent', () => {
                         <div className="value">{value}</div>
                     </div>
                 ),
-                willUpdate: (nextSelf, { state, props, reduce }) => {
-                    expect(nextSelf.state).toEqual({ value: 'new value' });
-                    expect(nextSelf.props).toEqual({ myProp: 'test' });
+                willUpdate: (nextMe, { state, props, reduce }) => {
+                    expect(nextMe.state).toEqual({ value: 'new value' });
+                    expect(nextMe.props).toEqual({ myProp: 'test' });
 
                     expect(state).toEqual({ value: 'initial' });
                     expect(props).toEqual({ myProp: 'test' });
@@ -351,14 +351,14 @@ describe('createStatefulComponent', () => {
             expect(wrapper.find('.value')).toHaveText('initial');
         });
 
-        it('should have access to nextSelf and self when props are updated', done => {
+        it('should have access to nextMe and Me when props are updated', done => {
             const MyStateFulComponent = createStatefulComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
-                shouldUpdate: (nextSelf, { state, props, reduce }) => {
-                    expect(nextSelf.state).toBeDefined();
-                    expect(nextSelf.props).toEqual({ value: 'new value' });
+                shouldUpdate: (nextMe, { state, props, reduce }) => {
+                    expect(nextMe.state).toBeDefined();
+                    expect(nextMe.props).toEqual({ value: 'new value' });
 
                     expect(state).toBeDefined();
                     expect(props).toEqual({ value: 'initial' });
@@ -376,7 +376,7 @@ describe('createStatefulComponent', () => {
             });
         });
 
-        it('should have access to nextSelf and self when the state is updated', done => {
+        it('should have access to nextMe and Me when the state is updated', done => {
             const setValue = value => ({
                 type: 'SET_VALUE',
                 value
@@ -391,9 +391,9 @@ describe('createStatefulComponent', () => {
                         <div className="value">{value}</div>
                     </div>
                 ),
-                shouldUpdate: (nextSelf, { state, props, reduce }) => {
-                    expect(nextSelf.state).toEqual({ value: 'new value' });
-                    expect(nextSelf.props).toBeDefined();
+                shouldUpdate: (nextMe, { state, props, reduce }) => {
+                    expect(nextMe.state).toEqual({ value: 'new value' });
+                    expect(nextMe.props).toBeDefined();
 
                     expect(state).toEqual({ value: 'initial' });
                     expect(props).toBeDefined();

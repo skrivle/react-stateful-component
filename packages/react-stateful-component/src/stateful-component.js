@@ -9,7 +9,7 @@ import { type Update, getSideEffect, getState } from './update';
 
 type Action = {};
 
-type Self<P, S, A, V> = {
+type Me<P, S, A, V> = {
     state: S,
     props: P,
     reduce: Reduce<A>,
@@ -21,13 +21,13 @@ type StatefulComponentDef<P: {}, S: {}, A: Action, V> = {|
     initialState: (props: P) => S,
     vars?: (props: P) => V,
     reducer: (state: S, action: A) => Update<S, A>,
-    render: (self: Self<P, S, A, V>) => Node,
-    didMount?: (self: Self<P, S, A, V>) => void,
-    willUnmount?: (self: Self<P, S, A, V>) => void,
-    willReceiveProps?: (nextProps: P, self: Self<P, S, A, V>) => void,
-    willUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A, V>) => void,
-    didUpdate?: (prevSelf: {| state: S, props: P |}, self: Self<P, S, A, V>) => void,
-    shouldUpdate?: (nextSelf: {| state: S, props: P |}, self: Self<P, S, A, V>) => boolean
+    render: (me: Me<P, S, A, V>) => Node,
+    didMount?: (me: Me<P, S, A, V>) => void,
+    willUnmount?: (me: Me<P, S, A, V>) => void,
+    willReceiveProps?: (nextProps: P, me: Me<P, S, A, V>) => void,
+    willUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => void,
+    didUpdate?: (prevMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => void,
+    shouldUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => boolean
 |};
 
 type GetDefinition<P, S, A, V> = () => StatefulComponentDef<P, S, A, V>;
@@ -81,7 +81,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
             this.sideEffectRunner(sideEffect, this.reduce);
         }
 
-        getSelf(): Self<P, S, A, V> {
+        getMe(): Me<P, S, A, V> {
             return {
                 state: this.state,
                 props: this.props,
@@ -93,32 +93,32 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
         componentDidMount() {
             const { didMount } = definition;
             if (!didMount) return;
-            didMount(this.getSelf());
+            didMount(this.getMe());
         }
 
         componentWillUnmount() {
             const { willUnmount } = definition;
             if (!willUnmount) return;
-            willUnmount(this.getSelf());
+            willUnmount(this.getMe());
         }
 
         componentWillReceiveProps(nextProps: P) {
             const { willReceiveProps } = definition;
 
             if (!willReceiveProps) return;
-            willReceiveProps(nextProps, this.getSelf());
+            willReceiveProps(nextProps, this.getMe());
         }
 
         componentWillUpdate(nextProps: P, nextState: S) {
             const { willUpdate } = definition;
             if (!willUpdate) return;
 
-            const nextSelf = {
+            const nextMe = {
                 state: nextState,
                 props: nextProps
             };
 
-            willUpdate(nextSelf, this.getSelf());
+            willUpdate(nextMe, this.getMe());
         }
 
         componentDidUpdate(prevProps: P, prevState: S) {
@@ -126,12 +126,12 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
 
             if (!didUpdate) return;
 
-            const prevSelf = {
+            const prevMe = {
                 state: prevState,
                 props: prevProps
             };
 
-            didUpdate(prevSelf, this.getSelf());
+            didUpdate(prevMe, this.getMe());
         }
 
         shouldComponentUpdate(nextProps: P, nextState: S) {
@@ -139,16 +139,16 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
 
             if (!shouldUpdate) return true;
 
-            const nextSelf = {
+            const nextMe = {
                 state: nextState,
                 props: nextProps
             };
 
-            return shouldUpdate(nextSelf, this.getSelf());
+            return shouldUpdate(nextMe, this.getMe());
         }
 
         render() {
-            return definition.render(this.getSelf());
+            return definition.render(this.getMe());
         }
     };
 }

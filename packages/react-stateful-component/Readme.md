@@ -200,7 +200,7 @@ parameter.
 
 The type signature of the render function:
 
-`<S, P, A>(self: {reduce: Reduce<A>, state: S, props: P}) => React.Node`
+`<S, P, A>(me: {reduce: Reduce<A>, state: S, props: P}) => React.Node`
 
 ### Rendering state and properties
 
@@ -308,15 +308,15 @@ hooks. All standard React lifecycle hooks are available except for `willMount`. 
 lifecycle hooks are **not** prefixed with "component", so instead of `componentDidMount` you can
 just use `didMount`.
 
-### Self
+### Me
 
 Almost all of the functions that are part of the definition (except for initialState and the
-reducer) will receive object of the type `Self<P, S, A, V>` as parameter. This object contains data
+reducer) will receive object of the type `Me<P, S, A, V>` as parameter. This object contains data
 and functions to work with the component. It contains the state, props, vars and the reduce
 function.
 
 ```javascript
-type Self<P, S, A, V> = {
+type Me<P, S, A, V> = {
     state: S,
     props: P,
     reduce: Reduce<A>,
@@ -336,7 +336,7 @@ A component definition can have the following properties defined:
 
 ### render
 
-`<S, P, A, V>(self: Self<P, S, A, V>) => React.Node`
+`<S, P, A, V>(me: Me<P, S, A, V>) => React.Node`
 
 ### displayName (optional)
 
@@ -344,27 +344,27 @@ A component definition can have the following properties defined:
 
 ### didMount (optional)
 
-`<S, P, A, V>(self: Self<P, S, A, V>) => void`
+`<S, P, A, V>(me: Me<P, S, A, V>) => void`
 
 ### willUnmount (optional)
 
-`<S, P, A, V>(self: Self<P, S, A, V>) => void`
+`<S, P, A, V>(me: Me<P, S, A, V>) => void`
 
 ### willUnmount (optional)
 
-`<S, P, A, V>(nextProps: P, self: Self<P, S, A, V>) => void`
+`<S, P, A, V>(nextProps: P, me: Me<P, S, A, V>) => void`
 
 ### willUpdate (optional)
 
-`<S, P, A, V>(nextSelf: { state: S, props: P }, self: Self<P, S, A, V>) => void`
+`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A, V>) => void`
 
 ### didUpdate (optional)
 
-`<S, P, A, V>(prevSelf: { state: S, props: P }, self: Self<P, S, A, V>) => void`
+`<S, P, A, V>(prevMe: { state: S, props: P }, me: Me<P, S, A, V>) => void`
 
 ### shouldUpdate
 
-`<S, P, A, V>(nextSelf: { state: S, props: P }, self: Self<P, S, A, V>) => boolean`
+`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A, V>) => boolean`
 
 ## Instance variables
 
