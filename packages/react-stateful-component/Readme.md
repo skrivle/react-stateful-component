@@ -350,7 +350,7 @@ A component definition can have the following properties defined:
 
 `<S, P, A, V>(me: Me<P, S, A, V>) => void`
 
-### willUnmount (optional)
+### willReceiveProps (optional)
 
 `<S, P, A, V>(nextProps: P, me: Me<P, S, A, V>) => void`
 
