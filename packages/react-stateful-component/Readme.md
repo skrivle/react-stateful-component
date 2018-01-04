@@ -182,11 +182,11 @@ const myReducer = (state, action) => {
 
 ### update.sideEffect(sideEffect)
 
-`<A>(sideEffect: SideEffect<A>) => UpdateSideEffect<A>`
+`<A, S>(sideEffect: SideEffect<A, S>) => UpdateSideEffect<A, S>`
 
 ### update.stateAndSideEffect(state, sideEffect)
 
-`<S, A>(state: S, sideEffect: SideEffect<A>) => UpdateStateAndSideEffect<S, A>`
+`<S, A>(state: S, sideEffect: SideEffect<A, S>) => UpdateStateAndSideEffect<S, A>`
 
 ### update.nothing()
 
@@ -243,7 +243,7 @@ timers, but also to read from or write to localStorage.
 The type signature of a side effect looks like this:
 
 ```javascript
-type SideEffect<A> = (reduce: Reduce<A>) => any;
+type SideEffect<A, S> = (reduce: Reduce<A>, state: S) => any;
 ```
 
 All side effects are executed outside of the component, a reducer will only schedule a side effect,

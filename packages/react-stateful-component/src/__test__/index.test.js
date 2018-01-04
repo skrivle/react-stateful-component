@@ -99,6 +99,7 @@ describe('createStatefulComponent', () => {
 
         it('should schedule sideEffects', () => {
             let reduceFn;
+            let componentState;
 
             const sideEffect = () => {};
 
@@ -112,8 +113,10 @@ describe('createStatefulComponent', () => {
                             return update.nothing();
                     }
                 },
-                render: ({ reduce }) => {
+                render: ({ reduce, state }) => {
                     reduceFn = reduce;
+                    componentState = state;
+
                     return (
                         <div>
                             <button onClick={() => reduce({ type: 'TEST' })}>click</button>
@@ -126,11 +129,16 @@ describe('createStatefulComponent', () => {
 
             wrapper.find('button').simulate('click');
 
-            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(sideEffect, reduceFn);
+            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(
+                sideEffect,
+                reduceFn,
+                componentState
+            );
         });
 
         it('should update state and schedule sideEffects', () => {
             let reduceFn;
+            let componentState;
 
             const sideEffect = () => {};
 
@@ -144,12 +152,13 @@ describe('createStatefulComponent', () => {
                             return update.nothing();
                     }
                 },
-                render: ({ state: { value }, reduce }) => {
+                render: ({ state, reduce }) => {
                     reduceFn = reduce;
+                    componentState = state;
                     return (
                         <div>
                             <button onClick={() => reduce({ type: 'TEST' })}>click</button>
-                            <div className="value">{value}</div>
+                            <div className="value">{state.value}</div>
                         </div>
                     );
                 }
@@ -160,7 +169,11 @@ describe('createStatefulComponent', () => {
             wrapper.find('button').simulate('click');
 
             expect(wrapper.state()).toEqual({ value: 'updated' });
-            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(sideEffect, reduceFn);
+            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(
+                sideEffect,
+                reduceFn,
+                componentState
+            );
         });
     });
 

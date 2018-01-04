@@ -39,7 +39,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
 
     return class extends Component<P, S> {
         reduce: Reduce<A>;
-        sideEffectRunner: (SideEffect: ?SideEffect<A>, reduce: Reduce<A>) => void;
+        sideEffectRunner: (SideEffect: ?SideEffect<A, S>, reduce: Reduce<A>, state: S) => void;
         vars: V;
 
         static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
@@ -60,7 +60,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
 
                     return newState ? newState : prevState;
                 },
-                () => this.runSideEffect(sideEffect)
+                () => this.runSideEffect(sideEffect, this.state)
             );
         };
 
@@ -77,8 +77,8 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
             if (definition.vars) this.vars = definition.vars(this.props);
         }
 
-        runSideEffect(sideEffect: ?SideEffect<A>) {
-            this.sideEffectRunner(sideEffect, this.reduce);
+        runSideEffect(sideEffect: ?SideEffect<A, S>, state: S) {
+            this.sideEffectRunner(sideEffect, this.reduce, state);
         }
 
         getMe(): Me<P, S, A, V> {

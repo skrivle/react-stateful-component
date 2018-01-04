@@ -47,4 +47,23 @@ describe('MockSideEffectProvider', () => {
         expect(sideEffect).not.toHaveBeenCalled();
         expect(mockSideEffect).toHaveBeenCalled();
     });
+
+    it('Should have access to the state within the sideEffect', done => {
+        const mySideEffect = jest.fn();
+        const reduce = jest.fn();
+        const myState = { content: 'initial' };
+
+        const mockSideEffectRunner = (sideEffectToRun, reduce, state) => {
+            expect(state).toEqual(myState);
+            done();
+        };
+
+        mount(
+            <MockSideEffectProvider mockRunner={mockSideEffectRunner}>
+                <MockComponent />
+            </MockSideEffectProvider>
+        );
+
+        runSideEffect(mySideEffect, reduce, myState);
+    });
 });

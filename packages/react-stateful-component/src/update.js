@@ -7,15 +7,15 @@ export type UpdateState<S> = {
     state: S
 };
 
-export type UpdateSideEffect<A> = {
+export type UpdateSideEffect<A, S> = {
     type: 'UPDATE_SIDE_EFFECT',
-    sideEffect: SideEffect<A>
+    sideEffect: SideEffect<A, S>
 };
 
 export type UpdateStateAndSideEffect<S, A> = {
     type: 'UPDATE_STATE_AND_SIDE_EFFECT',
     state: S,
-    sideEffect: SideEffect<A>
+    sideEffect: SideEffect<A, S>
 };
 
 export type UpdateNothing = {
@@ -24,7 +24,7 @@ export type UpdateNothing = {
 
 export type Update<S: {}, A> =
     | UpdateState<S>
-    | UpdateSideEffect<A>
+    | UpdateSideEffect<A, S>
     | UpdateStateAndSideEffect<S, A>
     | UpdateNothing;
 
@@ -33,14 +33,14 @@ export const state = <S>(state: S): UpdateState<S> => ({
     state
 });
 
-export const sideEffect = <A>(sideEffect: SideEffect<A>): UpdateSideEffect<A> => ({
+export const sideEffect = <A, S>(sideEffect: SideEffect<A, S>): UpdateSideEffect<A, S> => ({
     type: 'UPDATE_SIDE_EFFECT',
     sideEffect
 });
 
 export const stateAndSideEffect = <S, A>(
     state: S,
-    sideEffect: SideEffect<A>
+    sideEffect: SideEffect<A, S>
 ): UpdateStateAndSideEffect<S, A> => ({
     type: 'UPDATE_STATE_AND_SIDE_EFFECT',
     state,
@@ -51,7 +51,7 @@ export const nothing = (): UpdateNothing => ({
     type: 'UPDATE_NOTHING'
 });
 
-export const getSideEffect = <S: {}, A>(update: Update<S, A>): ?SideEffect<A> =>
+export const getSideEffect = <S: {}, A>(update: Update<S, A>): ?SideEffect<A, S> =>
     update.type === 'UPDATE_SIDE_EFFECT' || update.type === 'UPDATE_STATE_AND_SIDE_EFFECT'
         ? update.sideEffect
         : null;

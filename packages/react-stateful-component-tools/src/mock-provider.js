@@ -9,7 +9,7 @@ import {
 } from 'react-stateful-component';
 
 export class MockSideEffectProvider extends Component<{
-    mockRunner?: (sideEffect: ?SideEffect<*>, reduce: Reduce<*>) => void,
+    mockRunner?: (sideEffect: ?SideEffect<*, *>, reduce: Reduce<*>, state: *) => void,
     children: Node
 }> {
     static childContextTypes = {
@@ -20,9 +20,13 @@ export class MockSideEffectProvider extends Component<{
         const { mockRunner } = this.props;
 
         return {
-            [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (sideEffect: ?SideEffect<*>, reduce: Reduce<*>) => {
+            [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (
+                sideEffect: ?SideEffect<*, *>,
+                reduce: Reduce<*>,
+                state: *
+            ) => {
                 if (!mockRunner || !sideEffect) return;
-                mockRunner(sideEffect, reduce);
+                mockRunner(sideEffect, reduce, state);
             }
         };
     }

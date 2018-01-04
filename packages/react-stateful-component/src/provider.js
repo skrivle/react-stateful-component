@@ -7,9 +7,13 @@ import type { SideEffect, Reduce } from './types';
 export const SIDE_EFFECT_RUNNER_CONTEXT_KEY = 'runSideEffect';
 
 export const getChildContext = () => ({
-    [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (sideEffect: ?SideEffect<*>, reduce: Reduce<*>) => {
+    [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (
+        sideEffect: ?SideEffect<*, *>,
+        reduce: Reduce<*>,
+        state: *
+    ) => {
         if (!sideEffect) return;
-        sideEffect(reduce);
+        sideEffect(reduce, state);
     }
 });
 
