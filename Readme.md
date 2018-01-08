@@ -11,7 +11,9 @@ ReasonReact's api.
 * Simple side effect model
 * Flow type support
 
-> [React Stateful Component Documentation](packages/react-stateful-component)
+### > [React Stateful Component Documentation](packages/react-stateful-component)
+
+### > [TodoMVC example](https://vejersele.github.io/react-stateful-component-todo/)
 
 ## Making the case for functional stateful components.
 

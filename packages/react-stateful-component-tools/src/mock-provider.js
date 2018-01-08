@@ -8,10 +8,12 @@ import {
     type Reduce
 } from 'react-stateful-component';
 
-export class MockSideEffectProvider extends Component<{
+export type Props = {
     mockRunner?: (sideEffect: ?SideEffect<*, *>, reduce: Reduce<*>, state: *) => void,
     children: Node
-}> {
+};
+
+export class MockSideEffectProvider extends Component<Props> {
     static childContextTypes = {
         [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired
     };
