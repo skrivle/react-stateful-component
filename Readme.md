@@ -13,7 +13,7 @@ ReasonReact's api.
 
 ### > [React Stateful Component Documentation](packages/react-stateful-component)
 
-### > [TodoMVC example](https://vejersele.github.io/react-stateful-component-todo/)
+### > [TodoMVC example](https://github.com/vejersele/react-stateful-component-todo)
 
 ## Making the case for functional stateful components.
 

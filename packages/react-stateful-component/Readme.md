@@ -13,6 +13,8 @@ Features:
 * Supports React lifeCycle hooks and instance variables
 * Static type checking with flow type
 
+#### > [TodoMVC example](https://github.com/vejersele/react-stateful-component-todo)
+
 ## Getting started
 
 Install React Stateful Component using npm:
