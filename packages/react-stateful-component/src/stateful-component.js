@@ -16,7 +16,7 @@ type Me<P, S, A, V> = {
     vars: V
 };
 
-type StatefulComponentDef<P: {}, S: {}, A: Action, V> = {|
+type ComponentDef<P: {}, S: {}, A: Action, V> = {|
     displayName?: string,
     initialState: (props: P) => S,
     vars?: (props: P) => V,
@@ -30,12 +30,14 @@ type StatefulComponentDef<P: {}, S: {}, A: Action, V> = {|
     shouldUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => boolean
 |};
 
-type GetDefinition<P, S, A, V> = () => StatefulComponentDef<P, S, A, V>;
+export type ComponentDefinition<P, S, A, V> =
+    | (() => ComponentDef<P, S, A, V>)
+    | ComponentDef<P, S, A, V>;
 
 export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
-    getDefinition: GetDefinition<P, S, A, V>
+    definition: ComponentDefinition<P, S, A, V>
 ): ComponentType<P> {
-    const definition = getDefinition();
+    definition = typeof definition === 'function' ? definition() : definition;
 
     return class extends Component<P, S> {
         reduce: Reduce<A>;
@@ -71,7 +73,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
 
             invariant(
                 this.sideEffectRunner,
-                'Could not find runSideEffect in context, please wrap the root component in a <SideEffectProvider>.'
+                `Could not find ${SIDE_EFFECT_RUNNER_CONTEXT_KEY} in context, please wrap the root component in a <SideEffectProvider>.`
             );
 
             if (definition.vars) this.vars = definition.vars(this.props);
