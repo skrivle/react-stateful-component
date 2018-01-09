@@ -109,7 +109,7 @@ const MyComponent = createStatefulComponent(myComponentDefinition);
 
 ReactDOM.render(
     <SideEffectProvider>
-        <Counter />
+        <MyComponent />
     </SideEffectProvider>,
     document.getElementById('app')
 );
