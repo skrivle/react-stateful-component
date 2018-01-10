@@ -2,14 +2,16 @@
 
 [![Build Status](https://travis-ci.org/vejersele/react-stateful-component.svg?branch=master)](https://travis-ci.org/vejersele/react-stateful-component)
 
-**Warning:** This is work in progress, api's might still change.
-
 Create stateful React components in a functional way, with side effect support. Heavily inspired by
 ReasonReact's api.
 
 * Uses a reducer to manage state
-* Simple side effect model
-* Flow type support
+* The reducer can schedule side effects following the same pattern as Elm and Reason-React
+* Side effects are run outside of the component, meaning you can test your components without having
+  to execute side effects
+* life cycle hooks
+* Subscriptions to handle communication with the "outside world"
+* Static type checking with Flow
 
 ### > [React Stateful Component Documentation](packages/react-stateful-component)
 
