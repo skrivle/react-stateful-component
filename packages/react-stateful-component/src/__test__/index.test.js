@@ -100,6 +100,7 @@ describe('createStatefulComponent', () => {
         it('should schedule sideEffects', () => {
             let reduceFn;
             let componentState;
+            let componentRefs;
 
             const sideEffect = () => {};
 
@@ -113,9 +114,10 @@ describe('createStatefulComponent', () => {
                             return update.nothing();
                     }
                 },
-                render: ({ reduce, state }) => {
+                render: ({ reduce, state, refs }) => {
                     reduceFn = reduce;
                     componentState = state;
+                    componentRefs = refs;
 
                     return (
                         <div>
@@ -130,15 +132,17 @@ describe('createStatefulComponent', () => {
             wrapper.find('button').simulate('click');
 
             expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(
-                sideEffect,
+                { type: 'sideEffectDefault', sideEffect },
                 reduceFn,
-                componentState
+                componentState,
+                componentRefs
             );
         });
 
         it('should update state and schedule sideEffects', () => {
             let reduceFn;
             let componentState;
+            let componentRefs;
 
             const sideEffect = () => {};
 
@@ -152,9 +156,10 @@ describe('createStatefulComponent', () => {
                             return update.nothing();
                     }
                 },
-                render: ({ state, reduce }) => {
+                render: ({ state, reduce, refs }) => {
                     reduceFn = reduce;
                     componentState = state;
+                    componentRefs = refs;
                     return (
                         <div>
                             <button onClick={() => reduce({ type: 'TEST' })}>click</button>
@@ -170,9 +175,10 @@ describe('createStatefulComponent', () => {
 
             expect(wrapper.state()).toEqual({ value: 'updated' });
             expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(
-                sideEffect,
+                { type: 'sideEffectDefault', sideEffect },
                 reduceFn,
-                componentState
+                componentState,
+                componentRefs
             );
         });
     });
@@ -437,5 +443,9 @@ describe('createStatefulComponent', () => {
             const wrapper = mount(<MyStateFulComponent />, { context });
             expect(wrapper.find('MyComponent').length).toEqual(1);
         });
+    });
+
+    describe('subscriptions', () => {
+        it('should ');
     });
 });

@@ -2,18 +2,20 @@
 
 import { Component, Children, type Node } from 'react';
 import PropTypes from 'prop-types';
-import type { SideEffect, Reduce } from './types';
+import type { Reduce, Refs, SideEffectWrapper } from './types';
 
 export const SIDE_EFFECT_RUNNER_CONTEXT_KEY = 'runSideEffect';
+export const SUBSCRIPTION_RUNNER_CONTEXT_KEY = 'runS';
 
 export const getChildContext = () => ({
     [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (
-        sideEffect: ?SideEffect<*, *>,
+        sideEffectWrapper: SideEffectWrapper<*, *>,
         reduce: Reduce<*>,
-        state: *
+        state: *,
+        refs: Refs
     ) => {
-        if (!sideEffect) return;
-        sideEffect(reduce, state);
+        if (!sideEffectWrapper.sideEffect) return;
+        sideEffectWrapper.sideEffect(reduce, state, refs);
     }
 });
 

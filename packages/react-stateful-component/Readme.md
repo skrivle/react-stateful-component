@@ -302,6 +302,47 @@ const myReducer = (state, action) => {
 };
 ```
 
+## Refs
+
+[TODO]
+
+## Subscriptions
+
+Sometimes your component will need to interact with the outside world. For example by subscribing to
+events on a global event bus, by listening to click events that happen outside of your component or by
+starting a timer.
+
+A subscription is a function that gets reduce and refs as parameters and returns a function. The function that
+is returned from the subscription is used to release the subscription.
+
+Subscriptions will be automatically initialised in didMount and they will be released in willUnmount.
+
+Example:
+
+```javascript
+const intervalSubscription = (reduce, refs) => {
+    const interval = setInterval(() => reduce({ type: 'TICK' }), 1000);
+
+    const releaseSubscription = () => clearInterval(interval);
+
+    return releaseSubscription;
+};
+
+const myComponentDefinition = () => ({
+    initialState: () => ({ counter: 0 }),
+    subscriptions: [intervalSubscription],
+    reducer: (state, action) => {
+        switch (action.type) {
+            case 'TICK':
+                return update.state({ counter: state.counter + 1 });
+            default:
+                return update.nothing();
+        }
+    },
+    render: ({ state }) => <div>{state.counter}</div>
+});
+```
+
 ## API
 
 A component definition has a required and optional properties. `initialState`, `reducer` and
@@ -313,16 +354,16 @@ just use `didMount`.
 ### Me
 
 Almost all of the functions that are part of the definition (except for initialState and the
-reducer) will receive object of the type `Me<P, S, A, V>` as parameter. This object contains data
+reducer) will receive object of the type `Me<P, S, A>` as parameter. This object contains data
 and functions to work with the component. It contains the state, props, vars and the reduce
 function.
 
 ```javascript
-type Me<P, S, A, V> = {
+type Me<P, S, A> = {
     state: S,
     props: P,
     reduce: Reduce<A>,
-    vars: V
+    refs: Refs
 };
 ```
 
@@ -332,13 +373,17 @@ A component definition can have the following properties defined:
 
 `<S, P>(props: P) => S`
 
+### subscriptions
+
+`Array<Subscription<A>>`
+
 ### reducer
 
 `<S, A>(state: S, action: A) => Update<S, A>`
 
 ### render
 
-`<S, P, A, V>(me: Me<P, S, A, V>) => React.Node`
+`<S, P, A, V>(me: Me<P, S, A>) => React.Node`
 
 ### displayName (optional)
 
@@ -346,28 +391,24 @@ A component definition can have the following properties defined:
 
 ### didMount (optional)
 
-`<S, P, A, V>(me: Me<P, S, A, V>) => void`
+`<S, P, A, V>(me: Me<P, S, A>) => void`
 
 ### willUnmount (optional)
 
-`<S, P, A, V>(me: Me<P, S, A, V>) => void`
+`<S, P, A, V>(me: Me<P, S, A>) => void`
 
 ### willReceiveProps (optional)
 
-`<S, P, A, V>(nextProps: P, me: Me<P, S, A, V>) => void`
+`<S, P, A, V>(nextProps: P, me: Me<P, S, A>) => void`
 
 ### willUpdate (optional)
 
-`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A, V>) => void`
+`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A>) => void`
 
 ### didUpdate (optional)
 
-`<S, P, A, V>(prevMe: { state: S, props: P }, me: Me<P, S, A, V>) => void`
+`<S, P, A, V>(prevMe: { state: S, props: P }, me: Me<P, S, A>) => void`
 
 ### shouldUpdate
 
-`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A, V>) => boolean`
-
-## Instance variables
-
-[TODO]
+`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A>) => boolean`

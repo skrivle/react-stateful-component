@@ -4,45 +4,56 @@ import { Component, type Node, type ComponentType } from 'react';
 import PropTypes from 'prop-types';
 import invariant from 'invariant';
 import { SIDE_EFFECT_RUNNER_CONTEXT_KEY } from './provider';
-import type { SideEffect, Reduce } from './types';
+import type {
+    SideEffect,
+    SideEffectWrapper,
+    Reduce,
+    Subscription,
+    ReleaseSubscription,
+    Refs
+} from './types';
 import { type Update, getSideEffect, getState } from './update';
 
 type Action = {};
 
-type Me<P, S, A, V> = {
+type Me<P, S, A> = {|
     state: S,
     props: P,
-    reduce: Reduce<A>,
-    vars: V
-};
-
-type ComponentDef<P: {}, S: {}, A: Action, V> = {|
-    displayName?: string,
-    initialState: (props: P) => S,
-    vars?: (props: P) => V,
-    reducer: (state: S, action: A) => Update<S, A>,
-    render: (me: Me<P, S, A, V>) => Node,
-    didMount?: (me: Me<P, S, A, V>) => void,
-    willUnmount?: (me: Me<P, S, A, V>) => void,
-    willReceiveProps?: (nextProps: P, me: Me<P, S, A, V>) => void,
-    willUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => void,
-    didUpdate?: (prevMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => void,
-    shouldUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A, V>) => boolean
+    refs: Refs,
+    reduce: Reduce<A>
 |};
 
-export type ComponentDefinition<P, S, A, V> =
-    | (() => ComponentDef<P, S, A, V>)
-    | ComponentDef<P, S, A, V>;
+type ComponentDef<P: {}, S: {}, A: Action> = {|
+    displayName?: string,
+    initialState: (props: P) => S,
+    reducer: (state: S, action: A) => Update<S, A>,
+    subscriptions?: Array<Subscription<A>>,
+    render: (me: Me<P, S, A>) => Node,
+    didMount?: (me: Me<P, S, A>) => void,
+    willUnmount?: (me: Me<P, S, A>) => void,
+    willReceiveProps?: (nextProps: P, me: Me<P, S, A>) => void,
+    willUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A>) => void,
+    didUpdate?: (prevMe: {| state: S, props: P |}, me: Me<P, S, A>) => void,
+    shouldUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A>) => boolean
+|};
 
-export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
-    definition: ComponentDefinition<P, S, A, V>
+export type ComponentDefinition<P, S, A> = (() => ComponentDef<P, S, A>) | ComponentDef<P, S, A>;
+
+export default function createStatefulComponent<P: {}, S: {}, A: Action>(
+    definition: ComponentDefinition<P, S, A>
 ): ComponentType<P> {
     definition = typeof definition === 'function' ? definition() : definition;
 
     return class extends Component<P, S> {
         reduce: Reduce<A>;
-        sideEffectRunner: (SideEffect: ?SideEffect<A, S>, reduce: Reduce<A>, state: S) => void;
-        vars: V;
+        sideEffectRunner: (
+            SideEffect: SideEffectWrapper<A, S>,
+            reduce: Reduce<A>,
+            state: S,
+            refs: Refs
+        ) => void;
+        subscriptions: Array<ReleaseSubscription>;
+        myRefs: Refs;
 
         static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
         static displayName = definition.displayName;
@@ -62,7 +73,7 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
 
                     return newState ? newState : prevState;
                 },
-                () => this.runSideEffect(sideEffect, this.state)
+                () => this.runSideEffect(sideEffect)
             );
         };
 
@@ -76,30 +87,71 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action, V>(
                 `Could not find ${SIDE_EFFECT_RUNNER_CONTEXT_KEY} in context, please wrap the root component in a <SideEffectProvider>.`
             );
 
-            if (definition.vars) this.vars = definition.vars(this.props);
+            this.subscriptions = [];
+            this.myRefs = {};
         }
 
-        runSideEffect(sideEffect: ?SideEffect<A, S>, state: S) {
-            this.sideEffectRunner(sideEffect, this.reduce, state);
+        runSideEffect(sideEffect: ?SideEffect<A, S>, isSubscription: boolean = false) {
+            const sideEffectWrapper = isSubscription
+                ? {
+                      type: 'sideEffectSupscription',
+                      sideEffect
+                  }
+                : {
+                      type: 'sideEffectDefault',
+                      sideEffect
+                  };
+
+            this.sideEffectRunner(sideEffectWrapper, this.reduce, this.state, this.myRefs);
         }
 
-        getMe(): Me<P, S, A, V> {
+        getMe(): Me<P, S, A> {
             return {
                 state: this.state,
                 props: this.props,
                 reduce: this.reduce,
-                vars: this.vars
+                refs: this.myRefs
             };
+        }
+
+        subscribe() {
+            const { subscriptions } = definition;
+
+            const subscriptionSideEffect = (reduce, state, refs) => {
+                if (!subscriptions) return;
+
+                subscriptions.forEach(subscription => {
+                    this.subscriptions = [...this.subscriptions, subscription(reduce, refs)];
+                });
+            };
+
+            this.runSideEffect(subscriptionSideEffect, true);
+        }
+
+        unsubscribe() {
+            const subscriptionSideEffect = () => {
+                this.subscriptions.forEach(unsubscribe => {
+                    unsubscribe();
+                });
+            };
+
+            this.runSideEffect(subscriptionSideEffect, true);
         }
 
         componentDidMount() {
             const { didMount } = definition;
+
+            this.subscribe();
+
             if (!didMount) return;
             didMount(this.getMe());
         }
 
         componentWillUnmount() {
             const { willUnmount } = definition;
+
+            this.unsubscribe();
+
             if (!willUnmount) return;
             willUnmount(this.getMe());
         }

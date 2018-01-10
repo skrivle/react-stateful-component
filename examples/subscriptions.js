@@ -9,8 +9,16 @@ import createStatefulComponent, {
 
 const add = () => ({ type: 'ADD' });
 
+const intervalSubscription = reduce => {
+    const timer = setInterval(() => {
+        reduce(add());
+    }, 1000);
+
+    return () => clearInterval(timer);
+};
+
 const Counter = createStatefulComponent(() => ({
-    vars: () => ({}),
+    subscriptions: [intervalSubscription],
     initialState: () => ({
         counter: 0
     }),
@@ -24,16 +32,6 @@ const Counter = createStatefulComponent(() => ({
                 return update.nothing();
         }
     },
-    didMount({ reduce, vars }) {
-        vars.timer = setInterval(() => {
-            reduce(add());
-        }, 1000);
-    },
-    willUnmount({ vars }) {
-        if (typeof vars.timer !== 'undefined') {
-            clearInterval(vars.timer);
-        }
-    },
     render: ({ state }) => (
         <div>
             <span>{state.counter}</span>
@@ -42,7 +40,6 @@ const Counter = createStatefulComponent(() => ({
 }));
 
 const Controller = createStatefulComponent(() => ({
-    vars: () => ({}),
     initialState: () => ({
         isCounterVisible: false
     }),
@@ -62,7 +59,7 @@ const Controller = createStatefulComponent(() => ({
     )
 }));
 
-storiesOf('Instance Variables', module).add('Basic', () => (
+storiesOf('Subscriptions', module).add('Basic', () => (
     <div>
         <SideEffectProvider>
             <Controller />

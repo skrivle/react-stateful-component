@@ -2,4 +2,5 @@
 
 import './counter';
 import './todo';
-import './vars';
+import './subscriptions';
+import './refs';
