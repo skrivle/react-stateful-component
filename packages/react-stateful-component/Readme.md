@@ -302,10 +302,6 @@ const myReducer = (state, action) => {
 };
 ```
 
-## Refs
-
-[TODO]
-
 ## Subscriptions
 
 Sometimes your component will need to interact with the outside world. For example by subscribing to
@@ -316,6 +312,9 @@ A subscription is a function that gets reduce and refs as parameters and returns
 is returned from the subscription is used to release the subscription.
 
 Subscriptions will be automatically initialised in didMount and they will be released in willUnmount.
+
+Subscriptions are initialised and released outside of the Component but within the SideEffectProvider,
+meaning you can ignore or mock them while unit testing.
 
 Example:
 
@@ -343,6 +342,44 @@ const myComponentDefinition = () => ({
 });
 ```
 
+## Refs
+
+When you need to interact with a DOM element directly you will need to use refs. the `refs` property
+is part of the `Me` object that is sent into render. From render you can assign a ref just like you
+would do in a regular React component, the only difference is that you would assign it to the refs
+object instead of to the class instance.
+
+Refs can be accessed from sideEffects and from subscriptions.
+
+Example:
+
+```javascript
+const focusInput = (reduce, state, refs) => {
+    if (!refs.input) return;
+    refs.input.focus();
+};
+
+const myComponentDefinition = () => ({
+    initialState: () => ({ counter: 0 }),
+    reducer: (state, action) => {
+        switch (action.type) {
+            case 'INIT':
+                return update.sideEffect(focusInput);
+            default:
+                return update.nothing();
+        }
+    },
+    didMount: ({ reduce }) => {
+        reduce({ type: 'INIT' });
+    },
+    render: ({ state, refs }) => (
+        <div>
+            <input ref={ref => (refs.input = ref)} type="text" />
+        </div>
+    )
+});
+```
+
 ## API
 
 A component definition has a required and optional properties. `initialState`, `reducer` and
@@ -364,6 +401,14 @@ type Me<P, S, A> = {
     props: P,
     reduce: Reduce<A>,
     refs: Refs
+};
+```
+
+### Refs
+
+```javascript
+type Refs = {
+    [key: string]: ?HTMLElement
 };
 ```
 
