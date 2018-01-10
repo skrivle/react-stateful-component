@@ -10,8 +10,9 @@ Features:
 * The reducer can schedule side effects following the same pattern as Elm and Reason-React
 * Side effects are run outside of the component, meaning you can test your components without having
   to execute side effects
-* Supports React lifeCycle hooks and instance variables
-* Static type checking with flow type
+* life cycle hooks
+* Subscriptions to handle communication with the "outside world"
+* Static type checking with Flow
 
 #### > [TodoMVC example](https://github.com/vejersele/react-stateful-component-todo)
 
