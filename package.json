@@ -22,9 +22,9 @@
     },
     "license": "MIT",
     "devDependencies": {
-        "@storybook/addon-actions": "3.3.6",
-        "@storybook/addon-links": "3.3.6",
-        "@storybook/react": "3.3.6",
+        "@storybook/addon-actions": "3.3.7",
+        "@storybook/addon-links": "3.3.7",
+        "@storybook/react": "3.3.7",
         "babel-cli": "6.26.0",
         "babel-eslint": "8.2.1",
         "babel-jest": "22.0.4",
