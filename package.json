@@ -24,7 +24,7 @@
     "devDependencies": {
         "@storybook/addon-actions": "3.3.9",
         "@storybook/addon-links": "3.3.9",
-        "@storybook/addons": "3.4.0-alpha.2",
+        "@storybook/addons": "3.4.0-alpha.4",
         "@storybook/react": "3.3.9",
         "babel-cli": "6.26.0",
         "babel-eslint": "8.2.1",
