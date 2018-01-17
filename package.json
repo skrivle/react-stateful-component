@@ -53,6 +53,7 @@
         "react": "16.2.0",
         "react-dom": "16.2.0",
         "react-test-renderer": "16.2.0",
+        "uuid": "3.1.0",
         "watch-run": "1.2.5"
     },
     "lint-staged": {
