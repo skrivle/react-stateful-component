@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import type { Reduce, Refs, SideEffectWrapper } from './types';
 
 export const SIDE_EFFECT_RUNNER_CONTEXT_KEY = 'runSideEffect';
-export const SUBSCRIPTION_RUNNER_CONTEXT_KEY = 'runS';
 
 export const getChildContext = () => ({
     [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: (
