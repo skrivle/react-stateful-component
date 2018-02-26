@@ -46,7 +46,7 @@
         "jest": "22.3.0",
         "jest-enzyme": "4.2.0",
         "lerna": "2.8.0",
-        "lint-staged": "6.1.0",
+        "lint-staged": "6.1.1",
         "prettier": "1.10.2",
         "prop-types": "15.6.0",
         "raf": "3.4.0",
