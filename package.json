@@ -48,7 +48,7 @@
         "lerna": "2.9.0",
         "lint-staged": "7.0.0",
         "prettier": "1.10.2",
-        "prop-types": "15.6.0",
+        "prop-types": "15.6.1",
         "raf": "3.4.0",
         "react": "16.2.0",
         "react-dom": "16.2.0",
