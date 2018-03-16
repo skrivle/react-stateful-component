@@ -23,8 +23,8 @@
         "functional"
     ],
     "peerDependencies": {
-        "prop-types": ">=15",
-        "react": ">=15"
+        "prop-types": "^15.0.0-0 || ^16.0.0-0",
+        "react": "^15.0.0-0 || ^16.0.0-0"
     },
     "dependencies": {
         "invariant": "^2.2.2"
