@@ -1,18 +1,16 @@
 # React Stateful Component
 
-**warning**: This is work in progress, api's might still change.
-
 React Stateful Component provides tools to create stateful React components using just functions.
 
 Features:
 
-* Uses a reducer to manage state
-* The reducer can schedule side effects following the same pattern as Elm and Reason-React
-* Side effects are run outside of the component, meaning you can test your components without having
-  to execute side effects
-* life cycle hooks
-* Subscriptions to handle communication with the "outside world"
-* Static type checking with Flow
+*   Uses a reducer to manage state
+*   The reducer can schedule side effects following the same pattern as Elm and Reason-React
+*   Side effects are run outside of the component, meaning you can test your components without having
+    to execute side effects
+*   life cycle hooks
+*   Subscriptions to handle communication with the "outside world"
+*   Static type checking with Flow
 
 #### > [TodoMVC example](https://github.com/vejersele/react-stateful-component-todo)
 
@@ -455,6 +453,6 @@ A component definition can have the following properties defined:
 
 `<S, P, A, V>(prevMe: { state: S, props: P }, me: Me<P, S, A>) => void`
 
-### shouldUpdate
+### shouldUpdate (optional)
 
 `<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A>) => boolean`
