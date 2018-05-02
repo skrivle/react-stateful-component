@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import createStatefulComponent, { update, SideEffectProvider } from '../index';
+import createStatefulComponent, { update } from '../index';
 
 describe('Subscriptions', () => {
     it('should initialize the subscription on componentDidMount', done => {
@@ -26,11 +26,7 @@ describe('Subscriptions', () => {
             }
         }));
 
-        mount(
-            <SideEffectProvider>
-                <MyStateFulComponent />
-            </SideEffectProvider>
-        );
+        mount(<MyStateFulComponent />);
     });
 
     it('should release the subscription on willUnmount', () => {
@@ -46,11 +42,7 @@ describe('Subscriptions', () => {
             render: () => <div />
         }));
 
-        const wrapper = mount(
-            <SideEffectProvider>
-                <MyStateFulComponent />
-            </SideEffectProvider>
-        );
+        const wrapper = mount(<MyStateFulComponent />);
         wrapper.unmount();
 
         expect(releaseSubscription).toHaveBeenCalledTimes(1);

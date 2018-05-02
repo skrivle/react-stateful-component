@@ -1,9 +1,6 @@
 // @flow
 
-import { Component, type Node, type ComponentType } from 'react';
-import PropTypes from 'prop-types';
-import invariant from 'invariant';
-import { SIDE_EFFECT_RUNNER_CONTEXT_KEY } from './provider';
+import React, { Component, type Node, type ComponentType } from 'react';
 import type {
     SideEffect,
     SideEffectWrapper,
@@ -13,6 +10,7 @@ import type {
     Refs
 } from './types';
 import { type Update, getSideEffect, getState } from './update';
+import context from './context';
 
 type Action = {};
 
@@ -55,7 +53,6 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
         subscriptions: Array<ReleaseSubscription>;
         myRefs: Refs;
 
-        static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
         static displayName = definition.displayName;
 
         definition = definition;
@@ -79,13 +76,6 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
 
         constructor(props: P, context: Object) {
             super(props, context);
-
-            this.sideEffectRunner = context[SIDE_EFFECT_RUNNER_CONTEXT_KEY];
-
-            invariant(
-                this.sideEffectRunner,
-                `Could not find ${SIDE_EFFECT_RUNNER_CONTEXT_KEY} in context, please wrap the root component in a <SideEffectProvider>.`
-            );
 
             this.subscriptions = [];
             this.myRefs = {};
@@ -202,7 +192,14 @@ export default function createStatefulComponent<P: {}, S: {}, A: Action>(
         }
 
         render() {
-            return definition.render(this.getMe());
+            return (
+                <context.Consumer>
+                    {value => {
+                        this.sideEffectRunner = value;
+                        return definition.render(this.getMe());
+                    }}
+                </context.Consumer>
+            );
         }
     };
 }

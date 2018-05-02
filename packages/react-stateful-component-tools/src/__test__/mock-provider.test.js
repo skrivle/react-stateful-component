@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { mount } from 'enzyme';
-import PropTypes from 'prop-types';
-import { SIDE_EFFECT_RUNNER_CONTEXT_KEY } from 'react-stateful-component';
+import { context } from 'react-stateful-component';
 import { MockSideEffectProvider } from '../index';
 
 describe('MockSideEffectProvider', () => {
     let runSideEffect;
 
-    class MockComponent extends Component {
-        static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
-        constructor(props, context) {
-            super(props);
-            runSideEffect = context[SIDE_EFFECT_RUNNER_CONTEXT_KEY];
-        }
-        render() {
-            return <div />;
-        }
-    }
+    const MockComponent = () => {
+        return (
+            <context.Consumer>
+                {value => {
+                    runSideEffect = value;
+                    return <div />;
+                }}
+            </context.Consumer>
+        );
+    };
 
     it('Should not throw any errors', () => {
         mount(
