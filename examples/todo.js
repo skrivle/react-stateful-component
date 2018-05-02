@@ -3,7 +3,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import uuid from 'uuid/v1';
-import createStatefulComponent, {
+import createComponent, {
     update,
     SideEffectProvider
 } from '../packages/react-stateful-component/src';
@@ -36,7 +36,7 @@ const saveTodo = text => reduce =>
         );
     });
 
-const Todos = createStatefulComponent(() => ({
+const Todos = createComponent(() => ({
     initialState: () => ({
         items: [
             {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStatefulComponent, {
+import createComponent, {
     update,
     SideEffectProvider
 } from '../packages/react-stateful-component/src';
@@ -11,7 +11,7 @@ const add = () => ({ type: 'ADD' });
 
 const subtract = () => ({ type: 'SUBTRACT' });
 
-const Counter = createStatefulComponent(() => ({
+const Counter = createComponent(() => ({
     initialState: () => ({
         counter: 0
     }),

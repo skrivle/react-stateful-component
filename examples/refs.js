@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStatefulComponent, {
+import createComponent, {
     update,
     SideEffectProvider
 } from '../packages/react-stateful-component/src';
@@ -22,7 +22,7 @@ const outsideClickSubscription = (reduce, refs) => {
     return () => document.removeEventListener('click', handler);
 };
 
-const Dropdown = createStatefulComponent(() => ({
+const Dropdown = createComponent(() => ({
     initialState: () => ({
         isVisible: false
     }),

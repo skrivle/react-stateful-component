@@ -5,13 +5,13 @@
 Create stateful React components in a functional way, with side effect support. Heavily inspired by
 ReasonReact's api.
 
-* Uses a reducer to manage state
-* The reducer can schedule side effects following the same pattern as Elm and Reason-React
-* Side effects are run outside of the component, meaning you can test your components without having
-  to execute side effects
-* life cycle hooks
-* Subscriptions to handle communication with the "outside world"
-* Static type checking with Flow
+*   Uses a reducer to manage state
+*   The reducer can schedule side effects following the same pattern as Elm and Reason-React
+*   Side effects are run outside of the component, meaning you can test your components without having
+    to execute side effects
+*   life cycle hooks
+*   Subscriptions to handle communication with the "outside world"
+*   Static type checking with Flow
 
 ### > [React Stateful Component Documentation](packages/react-stateful-component)
 
@@ -71,13 +71,13 @@ side effect models.
 ```javascript
 import React from 'react';
 import ReactDOM from 'react-dom';
-import createStatefulComponent, { update, SideEffectProvider } from 'react-stateful-component';
+import createComponent, { update, SideEffectProvider } from 'react-stateful-component';
 
 // Actions
 const add = () => ({ type: 'ADD' });
 const subtract = () => ({ type: 'SUBTRACT' });
 
-const Counter = createStatefulComponent(() => ({
+const Counter = createComponent(() => ({
     initialState: () => ({
         counter: 0
     }),

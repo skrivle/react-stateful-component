@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import createStatefulComponent, { update } from '../index';
+import createComponent, { update } from '../index';
 
 describe('Subscriptions', () => {
     it('should initialize the subscription on componentDidMount', done => {
@@ -14,7 +14,7 @@ describe('Subscriptions', () => {
             return () => {};
         };
 
-        const MyStateFulComponent = createStatefulComponent(() => ({
+        const MyStateFulComponent = createComponent(() => ({
             displayName: 'MyComponent',
             subscriptions: [mySubscription],
             initialState: () => ({}),
@@ -34,7 +34,7 @@ describe('Subscriptions', () => {
 
         const mySubscription = () => releaseSubscription;
 
-        const MyStateFulComponent = createStatefulComponent(() => ({
+        const MyStateFulComponent = createComponent(() => ({
             displayName: 'MyComponent',
             subscriptions: [mySubscription],
             initialState: () => ({}),

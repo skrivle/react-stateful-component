@@ -23,7 +23,7 @@ Install React Stateful Component using npm:
 Import React Stateful Component into your project:
 
 ```javascript
-import createStatefulComponent, { update } from 'react-stateful-component';
+import createComponent, { update } from 'react-stateful-component';
 ```
 
 Next, write your component:
@@ -32,7 +32,7 @@ Next, write your component:
 const add = () => ({ type: 'ADD' });
 const subtract = () => ({ type: 'SUBTRACT' });
 
-const Counter = createStatefulComponent(() => ({
+const Counter = createComponent(() => ({
     initialState: () => ({
         counter: 0
     }),
@@ -92,11 +92,11 @@ first sight this might look pretty similar to defining a class based component. 
 important difference though. All of these functions can be run in isolation because they can not use
 `this` and their output is based in their input parameters.
 
-Once you have your component definition, you can use the `createStatefulComponent` function to
+Once you have your component definition, you can use the `createComponent` function to
 actually create the Component.
 
 ```javascript
-import createStatefulComponent, { update, SideEffectProvider } from 'react-stateful-component';
+import createComponent, { update, SideEffectProvider } from 'react-stateful-component';
 
 const myComponentDefinition = () => ({
     initialState: () => ({ counter: 0 }),
@@ -104,7 +104,7 @@ const myComponentDefinition = () => ({
     render: ({ state }) => <div>{state.counter}</div>
 });
 
-const MyComponent = createStatefulComponent(myComponentDefinition);
+const MyComponent = createComponent(myComponentDefinition);
 
 ReactDOM.render(
     <SideEffectProvider>
@@ -145,7 +145,7 @@ const myComponentDefinition = () => ({
     render: ({ state }) => <div>{state.counter}</div>
 });
 
-export default createStatefulComponent(myComponentDefinition);
+export default createComponent(myComponentDefinition);
 ```
 
 Just like in Redux the reducer works with State and Actions. However, you might have noticed a

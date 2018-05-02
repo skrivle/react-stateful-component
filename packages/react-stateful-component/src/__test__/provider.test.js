@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { mount } from 'enzyme';
-import createStatefulComponent, { update, SideEffectProvider } from '../index';
+import createComponent, { update, SideEffectProvider } from '../index';
 
 jest.useFakeTimers();
 
 describe('Provider', () => {
     it('it should render a stateful component without errors', () => {
-        const MyStateFulComponent = createStatefulComponent(() => ({
+        const MyStateFulComponent = createComponent(() => ({
             initialState: () => ({}),
             reducer: () => update.nothing(),
             render: () => <div />
@@ -28,7 +28,7 @@ describe('Provider', () => {
             }, 1000);
         };
 
-        const MyStateFulComponent = createStatefulComponent(() => ({
+        const MyStateFulComponent = createComponent(() => ({
             initialState: () => ({
                 content: 'initial'
             }),
@@ -72,7 +72,7 @@ describe('Provider', () => {
             done();
         };
 
-        const MyStateFulComponent = createStatefulComponent(() => ({
+        const MyStateFulComponent = createComponent(() => ({
             initialState: () => ({
                 content: 'initial'
             }),

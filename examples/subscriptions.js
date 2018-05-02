@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import createStatefulComponent, {
+import createComponent, {
     update,
     SideEffectProvider
 } from '../packages/react-stateful-component/src';
@@ -17,7 +17,7 @@ const intervalSubscription = reduce => {
     return () => clearInterval(timer);
 };
 
-const Counter = createStatefulComponent(() => ({
+const Counter = createComponent(() => ({
     subscriptions: [intervalSubscription],
     initialState: () => ({
         counter: 0
@@ -39,7 +39,7 @@ const Counter = createStatefulComponent(() => ({
     )
 }));
 
-const Controller = createStatefulComponent(() => ({
+const Controller = createComponent(() => ({
     initialState: () => ({
         isCounterVisible: false
     }),

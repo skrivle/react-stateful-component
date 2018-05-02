@@ -37,7 +37,7 @@ type ComponentDef<P: {}, S: {}, A: Action> = {|
 
 export type ComponentDefinition<P, S, A> = (() => ComponentDef<P, S, A>) | ComponentDef<P, S, A>;
 
-export default function createStatefulComponent<P: {}, S: {}, A: Action>(
+export default function createComponent<P: {}, S: {}, A: Action>(
     definition: ComponentDefinition<P, S, A>
 ): ComponentType<P> {
     definition = typeof definition === 'function' ? definition() : definition;
