@@ -1,39 +1,36 @@
 // @flow
 
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import createStatefulComponent, { update, SIDE_EFFECT_RUNNER_CONTEXT_KEY } from '../index';
+import { mount } from 'enzyme';
+import createComponent, { update } from '../index';
+import context from '../context';
 
-describe('createStatefulComponent', () => {
-    let context;
-
-    beforeEach(() => {
-        context = {
-            [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: jest.fn()
-        };
-    });
+describe('createComponent', () => {
+    const MockProvider = ({ children, sideEffectRunner }) => (
+        <context.Provider value={sideEffectRunner}>{children}</context.Provider>
+    );
 
     describe('initialState', () => {
         it('it should set the initialState', () => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({ counter: 10 }),
                 reducer: () => update.nothing(),
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />, { context });
+            const wrapper = mount(<MyStateFulComponent />);
 
             expect(wrapper.find('div')).toHaveText('10');
         });
 
         it('it should take props into account', () => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: props => ({ counter: props.counter }),
                 reducer: () => update.nothing(),
                 render: ({ state }) => <div>{state.counter}</div>
             }));
 
-            const wrapper = shallow(<MyStateFulComponent counter={20} />, { context });
+            const wrapper = mount(<MyStateFulComponent counter={20} />);
 
             expect(wrapper.find('div')).toHaveText('20');
         });
@@ -41,13 +38,13 @@ describe('createStatefulComponent', () => {
 
     describe('render', () => {
         it('should take props into account', () => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({ counter: 0 }),
                 reducer: () => update.nothing(),
                 render: ({ props }) => <div>{props.message}</div>
             }));
 
-            const wrapper = shallow(<MyStateFulComponent message={'Hello World'} />, { context });
+            const wrapper = mount(<MyStateFulComponent message={'Hello World'} />);
 
             expect(wrapper.find('div')).toHaveText('Hello World');
         });
@@ -55,7 +52,7 @@ describe('createStatefulComponent', () => {
 
     describe('reducer', () => {
         it('should update the state', () => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({ counter: 0 }),
                 reducer: (state, action) => {
                     const { counter } = state;
@@ -83,7 +80,7 @@ describe('createStatefulComponent', () => {
                 )
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />, { context });
+            const wrapper = mount(<MyStateFulComponent />);
 
             expect(wrapper.state()).toEqual({ counter: 0 });
 
@@ -104,7 +101,7 @@ describe('createStatefulComponent', () => {
 
             const sideEffect = () => {};
 
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({}),
                 reducer: (state, action) => {
                     switch (action.type) {
@@ -127,11 +124,17 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />, { context });
+            const sideEffectRunner = jest.fn();
+
+            const wrapper = mount(
+                <MockProvider sideEffectRunner={sideEffectRunner}>
+                    <MyStateFulComponent />
+                </MockProvider>
+            );
 
             wrapper.find('button').simulate('click');
 
-            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(
+            expect(sideEffectRunner).toBeCalledWith(
                 { type: 'sideEffectDefault', sideEffect },
                 reduceFn,
                 componentState,
@@ -146,7 +149,7 @@ describe('createStatefulComponent', () => {
 
             const sideEffect = () => {};
 
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
                 reducer: (state, action) => {
                     switch (action.type) {
@@ -169,12 +172,18 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />, { context });
+            const sideEffectRunner = jest.fn();
+
+            const wrapper = mount(
+                <MockProvider sideEffectRunner={sideEffectRunner}>
+                    <MyStateFulComponent />
+                </MockProvider>
+            );
 
             wrapper.find('button').simulate('click');
 
-            expect(wrapper.state()).toEqual({ value: 'updated' });
-            expect(context[SIDE_EFFECT_RUNNER_CONTEXT_KEY]).toBeCalledWith(
+            expect(wrapper.find('.value')).toHaveText('updated');
+            expect(sideEffectRunner).toBeCalledWith(
                 { type: 'sideEffectDefault', sideEffect },
                 reduceFn,
                 componentState,
@@ -185,7 +194,7 @@ describe('createStatefulComponent', () => {
 
     describe('didMount', () => {
         it('should have access to Me', done => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
                 render: () => <div />,
@@ -197,13 +206,13 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            shallow(<MyStateFulComponent />, { context });
+            mount(<MyStateFulComponent />);
         });
     });
 
     describe('unMount', () => {
         it('should have access to Me', done => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
                 render: () => <div />,
@@ -216,7 +225,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = shallow(<MyStateFulComponent />, { context });
+            const wrapper = mount(<MyStateFulComponent />);
 
             wrapper.unmount();
         });
@@ -224,7 +233,7 @@ describe('createStatefulComponent', () => {
 
     describe('willReceiveProps', () => {
         it('should have access to nextProps and Me', done => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: props => ({
                     value: props.value
                 }),
@@ -241,7 +250,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = shallow(<MyStateFulComponent value="initial" />, { context });
+            const wrapper = mount(<MyStateFulComponent value="initial" />);
 
             wrapper.setProps({ value: 'new value' });
         });
@@ -254,7 +263,7 @@ describe('createStatefulComponent', () => {
                 value
             });
 
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({
                     value: 'initial'
                 }),
@@ -277,7 +286,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent myProp="test" />, { context });
+            const wrapper = mount(<MyStateFulComponent myProp="test" />);
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -292,7 +301,7 @@ describe('createStatefulComponent', () => {
                 value
             });
 
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({
                     value: 'initial'
                 }),
@@ -315,7 +324,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent myProp="test" />, { context });
+            const wrapper = mount(<MyStateFulComponent myProp="test" />);
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -325,14 +334,14 @@ describe('createStatefulComponent', () => {
 
     describe('shouldUpdate', () => {
         it('should prevent the component from updating when new props are passed and shouldUpdate is returning false', () => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
                 shouldUpdate: () => false
             }));
 
-            const wrapper = mount(<MyStateFulComponent value="initial" />, { context });
+            const wrapper = mount(<MyStateFulComponent value="initial" />);
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -349,7 +358,7 @@ describe('createStatefulComponent', () => {
                 value
             });
 
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
                 reducer: (state, action) => update.state({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
@@ -361,7 +370,7 @@ describe('createStatefulComponent', () => {
                 shouldUpdate: () => false
             }));
 
-            const wrapper = mount(<MyStateFulComponent />, { context });
+            const wrapper = mount(<MyStateFulComponent />);
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -371,7 +380,7 @@ describe('createStatefulComponent', () => {
         });
 
         it('should have access to nextMe and Me when props are updated', done => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
                 render: ({ props: { value } }) => <div className="value">{value}</div>,
@@ -388,7 +397,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent value="initial" />, { context });
+            const wrapper = mount(<MyStateFulComponent value="initial" />);
 
             wrapper.setProps({
                 value: 'new value'
@@ -401,7 +410,7 @@ describe('createStatefulComponent', () => {
                 value
             });
 
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 initialState: () => ({ value: 'initial' }),
                 reducer: (state, action) => update.state({ value: action.value }),
                 render: ({ state: { value }, reduce }) => (
@@ -423,7 +432,7 @@ describe('createStatefulComponent', () => {
                 }
             }));
 
-            const wrapper = mount(<MyStateFulComponent />, { context });
+            const wrapper = mount(<MyStateFulComponent />);
 
             expect(wrapper.find('.value')).toHaveText('initial');
 
@@ -433,19 +442,15 @@ describe('createStatefulComponent', () => {
 
     describe('displayName', () => {
         it('should set the displayName', () => {
-            const MyStateFulComponent = createStatefulComponent(() => ({
+            const MyStateFulComponent = createComponent(() => ({
                 displayName: 'MyComponent',
                 initialState: () => ({}),
                 reducer: () => update.nothing(),
                 render: () => <div />
             }));
 
-            const wrapper = mount(<MyStateFulComponent />, { context });
+            const wrapper = mount(<MyStateFulComponent />);
             expect(wrapper.find('MyComponent').length).toEqual(1);
         });
-    });
-
-    describe('subscriptions', () => {
-        it('should ');
     });
 });
