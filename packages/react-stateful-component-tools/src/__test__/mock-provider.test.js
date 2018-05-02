@@ -6,11 +6,6 @@ import { MockSideEffectProvider } from '../index';
 describe('MockSideEffectProvider', () => {
     let runSideEffect;
 
-    // static contextTypes = { [SIDE_EFFECT_RUNNER_CONTEXT_KEY]: PropTypes.func.isRequired };
-    // constructor(props, context) {
-    //     super(props);
-    //     runSideEffect = context[SIDE_EFFECT_RUNNER_CONTEXT_KEY];
-    // }
     const MockComponent = () => {
         return (
             <context.Consumer>
