@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import createReactContext from 'create-react-context';
 import type { Reduce, Refs, SideEffectWrapper } from './types';
 
 export const runSideEffect = (
@@ -13,6 +13,6 @@ export const runSideEffect = (
     sideEffectWrapper.sideEffect(reduce, state, refs);
 };
 
-const context = React.createContext(runSideEffect);
+const context = createReactContext(runSideEffect);
 
 export default context;

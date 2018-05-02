@@ -10,20 +10,13 @@
         "build-storybook": "build-storybook",
         "precommit": "lint-staged",
         "clean": "rm -rf packages/*/lib",
-        "build:react-stateful-component:flow":
-            "flow-copy-source packages/react-stateful-component/src packages/react-stateful-component/lib --ignore __test__/**/*",
-        "build:react-stateful-component:babel":
-            "babel packages/react-stateful-component/src --out-dir packages/react-stateful-component/lib --ignore __test__/",
-        "build:react-stateful-component":
-            "npm run build:react-stateful-component:flow && npm run build:react-stateful-component:babel",
-        "build:react-stateful-component-tools:flow":
-            "flow-copy-source packages/react-stateful-component-tools/src packages/react-stateful-component-tools/lib --ignore __test__/**/*",
-        "build:react-stateful-component-tools:babel":
-            "babel packages/react-stateful-component-tools/src --out-dir packages/react-stateful-component-tools/lib --ignore __test__/",
-        "build:react-stateful-component-tools":
-            "npm run build:react-stateful-component-tools:flow && npm run build:react-stateful-component-tools:babel",
-        "build":
-            "npm run clean && npm run build:react-stateful-component && npm run build:react-stateful-component-tools",
+        "build:react-stateful-component:flow": "flow-copy-source packages/react-stateful-component/src packages/react-stateful-component/lib --ignore __test__/**/*",
+        "build:react-stateful-component:babel": "babel packages/react-stateful-component/src --out-dir packages/react-stateful-component/lib --ignore __test__/",
+        "build:react-stateful-component": "npm run build:react-stateful-component:flow && npm run build:react-stateful-component:babel",
+        "build:react-stateful-component-tools:flow": "flow-copy-source packages/react-stateful-component-tools/src packages/react-stateful-component-tools/lib --ignore __test__/**/*",
+        "build:react-stateful-component-tools:babel": "babel packages/react-stateful-component-tools/src --out-dir packages/react-stateful-component-tools/lib --ignore __test__/",
+        "build:react-stateful-component-tools": "npm run build:react-stateful-component-tools:flow && npm run build:react-stateful-component-tools:babel",
+        "build": "npm run clean && npm run build:react-stateful-component && npm run build:react-stateful-component-tools",
         "build:watch": "watch-run -p './packages/*/src/**/*.js' npm run build",
         "publish": "npm run test && npm run build && lerna publish"
     },
@@ -40,6 +33,7 @@
         "babel-plugin-transform-object-rest-spread": "6.26.0",
         "babel-preset-env": "1.6.1",
         "babel-preset-react": "6.24.1",
+        "create-react-context": "^0.2.2",
         "enzyme": "3.3.0",
         "enzyme-adapter-react-16": "1.1.1",
         "enzyme-context-patch": "0.0.6",
@@ -57,16 +51,20 @@
         "lint-staged": "7.0.5",
         "prettier": "1.12.1",
         "raf": "3.4.0",
-        "react": "16.3.2",
+        "react": "^16.3.2",
         "react-dom": "16.3.2",
         "react-test-renderer": "16.3.2",
         "uuid": "3.2.1",
         "watch-run": "1.2.5"
     },
     "lint-staged": {
-        "**/*.js": ["prettier --write", "git add"]
+        "**/*.js": [
+            "prettier --write",
+            "git add"
+        ]
     },
     "jest": {
         "setupTestFrameworkScriptFile": "./setup-tests.js"
-    }
+    },
+    "dependencies": {}
 }
