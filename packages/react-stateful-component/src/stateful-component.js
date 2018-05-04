@@ -29,8 +29,6 @@ type ComponentDef<P: {}, S: {}, A: Action> = {|
     render: (me: Me<P, S, A>) => Node,
     didMount?: (me: Me<P, S, A>) => void,
     willUnmount?: (me: Me<P, S, A>) => void,
-    willReceiveProps?: (nextProps: P, me: Me<P, S, A>) => void,
-    willUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A>) => void,
     didUpdate?: (prevMe: {| state: S, props: P |}, me: Me<P, S, A>) => void,
     shouldUpdate?: (nextMe: {| state: S, props: P |}, me: Me<P, S, A>) => boolean
 |};
@@ -144,25 +142,6 @@ export default function createComponent<P: {}, S: {}, A: Action>(
 
             if (!willUnmount) return;
             willUnmount(this.getMe());
-        }
-
-        componentWillReceiveProps(nextProps: P) {
-            const { willReceiveProps } = definition;
-
-            if (!willReceiveProps) return;
-            willReceiveProps(nextProps, this.getMe());
-        }
-
-        componentWillUpdate(nextProps: P, nextState: S) {
-            const { willUpdate } = definition;
-            if (!willUpdate) return;
-
-            const nextMe = {
-                state: nextState,
-                props: nextProps
-            };
-
-            willUpdate(nextMe, this.getMe());
         }
 
         componentDidUpdate(prevProps: P, prevState: S) {

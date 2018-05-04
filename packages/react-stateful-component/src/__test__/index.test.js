@@ -231,31 +231,6 @@ describe('createComponent', () => {
         });
     });
 
-    describe('willReceiveProps', () => {
-        it('should have access to nextProps and Me', done => {
-            const MyStateFulComponent = createComponent(() => ({
-                initialState: props => ({
-                    value: props.value
-                }),
-                reducer: () => update.nothing(),
-                render: () => <div />,
-                willReceiveProps: (nextProps, { state, props, reduce }) => {
-                    expect(nextProps.value).toBe('new value');
-
-                    expect(state).toBeDefined();
-                    expect(props).toBeDefined();
-                    expect(reduce).toBeDefined();
-
-                    done();
-                }
-            }));
-
-            const wrapper = mount(<MyStateFulComponent value="initial" />);
-
-            wrapper.setProps({ value: 'new value' });
-        });
-    });
-
     describe('didUpdate', () => {
         it('should be called when the component has been updated', done => {
             const setValue = value => ({
@@ -279,44 +254,6 @@ describe('createComponent', () => {
                     expect(prevMe.props).toEqual({ myProp: 'test' });
 
                     expect(state).toEqual({ value: 'new value' });
-                    expect(props).toEqual({ myProp: 'test' });
-                    expect(reduce).toBeDefined();
-
-                    done();
-                }
-            }));
-
-            const wrapper = mount(<MyStateFulComponent myProp="test" />);
-
-            expect(wrapper.find('.value')).toHaveText('initial');
-
-            wrapper.find('.update').simulate('click');
-        });
-    });
-
-    describe('willUpdate', () => {
-        it('should be called before the component has been updated', done => {
-            const setValue = value => ({
-                type: 'SET_VALUE',
-                value
-            });
-
-            const MyStateFulComponent = createComponent(() => ({
-                initialState: () => ({
-                    value: 'initial'
-                }),
-                reducer: (state, action) => update.state({ value: action.value }),
-                render: ({ state: { value }, reduce }) => (
-                    <div>
-                        <button className="update" onClick={() => reduce(setValue('new value'))} />
-                        <div className="value">{value}</div>
-                    </div>
-                ),
-                willUpdate: (nextMe, { state, props, reduce }) => {
-                    expect(nextMe.state).toEqual({ value: 'new value' });
-                    expect(nextMe.props).toEqual({ myProp: 'test' });
-
-                    expect(state).toEqual({ value: 'initial' });
                     expect(props).toEqual({ myProp: 'test' });
                     expect(reduce).toBeDefined();
 
