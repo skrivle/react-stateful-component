@@ -1,9 +1,11 @@
 {
     "name": "react-stateful-component",
-    "version": "1.0.0-0",
+    "version": "2.0.0",
     "description": "Create stateful React components in a functional way.",
     "main": "lib/index.js",
-    "files": ["lib"],
+    "files": [
+        "lib"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/vejersele/react-stateful-component.git"
