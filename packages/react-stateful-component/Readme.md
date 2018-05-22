@@ -441,14 +441,6 @@ A component definition can have the following properties defined:
 
 `<S, P, A, V>(me: Me<P, S, A>) => void`
 
-### willReceiveProps (optional)
-
-`<S, P, A, V>(nextProps: P, me: Me<P, S, A>) => void`
-
-### willUpdate (optional)
-
-`<S, P, A, V>(nextMe: { state: S, props: P }, me: Me<P, S, A>) => void`
-
 ### didUpdate (optional)
 
 `<S, P, A, V>(prevMe: { state: S, props: P }, me: Me<P, S, A>) => void`
