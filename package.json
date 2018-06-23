@@ -27,7 +27,7 @@
         "@storybook/addons": "3.4.8",
         "@storybook/react": "3.4.8",
         "babel-cli": "6.26.0",
-        "babel-eslint": "8.2.4",
+        "babel-eslint": "8.2.5",
         "babel-jest": "23.0.1",
         "babel-plugin-transform-class-properties": "6.24.1",
         "babel-plugin-transform-object-rest-spread": "6.26.0",
