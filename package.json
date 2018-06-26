@@ -54,7 +54,7 @@
         "react": "16.4.1",
         "react-dom": "16.4.1",
         "react-test-renderer": "16.4.1",
-        "uuid": "3.2.1",
+        "uuid": "3.3.0",
         "watch-run": "1.2.5"
     },
     "lint-staged": {
