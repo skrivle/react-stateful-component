@@ -90,7 +90,7 @@ const myComponentDefinition = () => ({
 A component definition should define at least an initialState, reducer, and render function. At
 first sight this might look pretty similar to defining a class based component. There is an
 important difference though. All of these functions can be run in isolation because they can not use
-`this` and their output is based in their input parameters.
+`this` and their output is based on their input parameters.
 
 Once you have your component definition, you can use the `createComponent` function to
 actually create the Component.
@@ -150,7 +150,7 @@ export default createComponent(myComponentDefinition);
 
 Just like in Redux the reducer works with State and Actions. However, you might have noticed a
 difference between a Redux reducer and the reducers used in the examples above. The reducers in
-these examples aren't just returning state. Instead they are return an `Update<S, A>`. The next
+these examples aren't just returning state. Instead they are returning an `Update<S, A>`. The next
 section will explain these updates in more detail.
 
 ## Update types
