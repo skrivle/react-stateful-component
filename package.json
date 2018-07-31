@@ -36,7 +36,7 @@
         "create-react-context": "0.2.2",
         "enzyme": "3.3.0",
         "enzyme-adapter-react-16": "1.1.1",
-        "enzyme-context-patch": "0.0.8",
+        "enzyme-context-patch": "0.0.9",
         "eslint": "5.2.0",
         "eslint-config-prettier": "2.9.0",
         "eslint-plugin-flowtype": "2.50.0",
