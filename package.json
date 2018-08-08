@@ -34,7 +34,7 @@
         "babel-preset-env": "1.7.0",
         "babel-preset-react": "6.24.1",
         "create-react-context": "0.2.2",
-        "enzyme": "3.3.0",
+        "enzyme": "3.4.0",
         "enzyme-adapter-react-16": "1.1.1",
         "enzyme-context-patch": "0.0.9",
         "eslint": "5.3.0",
