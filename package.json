@@ -40,7 +40,7 @@
         "eslint": "5.3.0",
         "eslint-config-prettier": "2.9.0",
         "eslint-plugin-flowtype": "2.50.0",
-        "eslint-plugin-jest": "21.18.0",
+        "eslint-plugin-jest": "21.19.0",
         "eslint-plugin-react": "7.10.0",
         "flow-bin": "0.78.0",
         "flow-copy-source": "2.0.2",
