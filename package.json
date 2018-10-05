@@ -51,9 +51,9 @@
         "lint-staged": "7.3.0",
         "prettier": "1.14.3",
         "raf": "3.4.0",
-        "react": "16.4.2",
-        "react-dom": "16.4.2",
-        "react-test-renderer": "16.4.2",
+        "react": "16.5.2",
+        "react-dom": "16.5.2",
+        "react-test-renderer": "16.5.2",
         "uuid": "3.3.2",
         "watch-run": "1.2.5"
     },
