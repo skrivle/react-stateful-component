@@ -48,7 +48,7 @@
         "jest-enzyme": "6.1.2",
         "lerna": "3.10.6",
         "lint-staged": "7.3.0",
-        "prettier": "1.16.0",
+        "prettier": "1.16.1",
         "raf": "3.4.1",
         "react": "16.7.0",
         "react-dom": "16.7.0",
